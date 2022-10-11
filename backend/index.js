@@ -4,13 +4,16 @@ import checkAuth from "./middleware/checkAuth.js";
 import multer from "multer";
 import cors from 'cors';
 import fs from 'fs';
+import dotenv from 'dotenv'
 import { getMe, login, register } from "./controllers/UserController.js";
 import { loginValidation, registerValidation } from "./validations.js";
 import { getAllProducts, getProductByCategory, getSingleProduct } from "./controllers/ProductController.js";
 import handleValidationErrors from "./middleware/handleValidationErrors.js";
 
+
+dotenv.config();
 mongoose
-    .connect('mongodb+srv://nargiz:123@brandyol.fip5eju.mongodb.net/products?retryWrites=true&w=majority')
+    .connect(process.env.MONGO_URL)
     .then(() => console.log("DB ok"))
     .catch(err => console.log('DB error', err))
 const app = express()
