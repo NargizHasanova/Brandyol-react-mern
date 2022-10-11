@@ -1,0 +1,121 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html{
+    font-size: 100% !important;
+    font-family: 'Quicksand', sans-serif !important;
+}
+
+body{
+    background-color: #F2EDED !important;
+    font-size: 16px !important;
+    font-family: 'Quicksand', sans-serif !important;
+    line-height: inherit !important;
+    letter-spacing: normal !important;
+}
+.add-bdr{
+    border: 1px solid $mainBlueColor;
+}
+
+.container{
+    padding: 0 50px;
+    @media (max-width:1000px) {
+        padding: 10px 20px;
+    }   
+}
+
+a {
+    text-decoration: none;
+}
+
+ul {
+    list-style-type: none;
+}
+
+input {
+    border: none;
+    outline: none;
+}
+select{
+    border: none;
+    outline: none;
+}
+
+button {
+    border: none;
+    outline: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.title {
+    //text-align: center;
+    color: #471313;
+    font-weight: bold;
+    font-size: 29px;
+    margin-bottom: 32px;
+}
+
+.rotate180{
+    transform: rotate(180deg);
+}
+
+.rotate0{
+    transform: rotate(0);
+}
+
+.d-block{
+    display: block;
+}
+
+.d-none{
+    display: none;
+}
+
+.position-left{
+    left: 0 !important;
+    padding-left: 20px !important;
+}
+
+.fa-angle-double-right{
+    color: $mainRedColor;
+}
+
+.swiper-button-next,.swiper-button-prev{
+    color: $mainBlueColor !important;
+}
+.productItem__left .mySwiper{
+    height: 16% !important;
+}
+
+//productItem component size select style
+.clicked-size-btn{
+    background-color: $mainBlueColor !important;
+    color: #fff !important;
+    border: 2px solid blue !important;
+}
+
+//productItem component color select style
+.border-blue{
+    border: 2px solid blue !important;
+}
+
+.basket-item-color-span{
+    padding: 0 10px;
+    border: 1px solid #eee;
+    margin-left: 5px;
+}
+
+//size-chart style
+.size-table{
+    width: 240px;
+    height: 300px;
+    img{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
