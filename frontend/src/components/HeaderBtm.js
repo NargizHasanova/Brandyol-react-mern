@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router';
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
-import { useDispatch } from 'react-redux';
-import { resetFilterBar, setFilteredProducts, setCategoryName } from '../redux/clothesSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { resetFilterBar, setFilteredProducts, setCategoryName, fetchCategories, fetchFilteredProducts } from '../redux/clothesSlice';
 
 // Import Swiper styles
 import "swiper/css";
@@ -11,70 +11,33 @@ import "swiper/css/navigation"
 
 // import Swiper core and required modules
 import SwiperCore, { Pagination, Navigation, Autoplay } from 'swiper';
-
-
+import { useEffect, useState } from 'react';
 
 // install Swiper modules
 SwiperCore.use([Pagination, Navigation]);
 
-const categories = [
-   {
-      "id": 1,
-      "cat": "Sports wear"
-   },
-   {
-      "id": 2,
-      "cat": "T-Shirt"
-   },
-   {
-      "id": 3,
-      "cat": "Jeans"
-   },
-   {
-      "id": 4,
-      "cat": "Sweater"
-   },
-   {
-      "id": 5,
-      "cat": "Underwear"
-   },
-   {
-      "id": 6,
-      "cat": "Shorts"
-   },
-   {
-      "id": 7,
-      "cat": "Skirt"
-   },
-   {
-      "id": 8,
-      "cat": "Jacket"
-   },
-   {
-      "id": 9,
-      "cat": "Blouse"
-   },
-   {
-      "id": 10,
-      "cat": "Dress"
-   }
-]
-
 export default function HeaderBtm() {
+   const { categoriesData: categories, productsPageClothes } = useSelector(state => state.clothes)
    const dispatch = useDispatch()
    const navigate = useNavigate();
+   console.log(productsPageClothes);
 
    function selectCategory(category) {
-      dispatch(setFilteredProducts(category))
-      dispatch(setCategoryName(category))
-      dispatch(resetFilterBar())
-      navigate("products")
+      // dispatch(setFilteredProducts(category))
+      // dispatch(setCategoryName(category))
+      // dispatch(resetFilterBar())
+      dispatch(fetchFilteredProducts({ category: category }))
+      navigate(`/search/?cat=${category}`)
    }
 
+   useEffect(() => {
+      console.log('fetchCategories');
+      dispatch(fetchCategories())
+   }, []);
 
    return (
       <section className='headerBtm container'>
-         <Swiper
+         {categories.length === 0 ? <span>skeleton</span> : <Swiper
             loop={false}
             grabCursor={true}
             spaceBetween={0}
@@ -99,18 +62,18 @@ export default function HeaderBtm() {
                   slidesPerView: categories.length,
                }
             }}>
-            {categories.map(item => {
+            {categories?.map(item => {
                return (
                   <SwiperSlide
                      className="swiper-slide header-categories"
-                     key={item.id}
+                     key={item._id}
                      onClick={() => selectCategory(item.cat)}
                   >
                      {item.cat}
                   </SwiperSlide>
                )
             })}
-         </Swiper>
+         </Swiper>}
       </section>
    )
 }

@@ -9,19 +9,59 @@ export const fetchClothesData = createAsyncThunk("clothes/fetchClothes",
     }
 )
 
+export const fetchCategories = createAsyncThunk("categories/fetchCategories",
+    async () => {
+        const { data } = await Axios.get(`/categories`)
+        return data
+    }
+)
+
+export const fetchBrands = createAsyncThunk("brands/fetchBrands",
+    async () => {
+        const { data } = await Axios.get(`/brands`)
+        return data
+    }
+)
+
+// "http://localhost:4444/search/?cat=&brand=[object%20Object]"
+export const fetchFilteredProducts = createAsyncThunk("search/fetchFilteredProducts",
+    async ({ category: cat, brand }) => {
+        const isBrand = typeof brand === "string"
+        const isCategory = typeof cat === "string"
+        console.log({ isBrand }); // false
+        console.log({ isCategory }); // true
+        console.log(cat);
+        console.log(brand);
+
+        if (isBrand && isCategory) {
+            const { data } = await Axios.get(`/search/?cat=${cat}&brand=${brand}`)
+            console.log("ikiside true");
+            return data
+        } else if (isCategory) {
+            console.log('category true');
+            const { data } = await Axios.get(`/search/?cat=${cat}`)
+            console.log(data);
+            return data
+        }
+
+    }
+)
+
 export const clothesSlice = createSlice({
     name: "clothes",
     initialState: {
         data: [],
+        categoriesData: [],
         favoriteBox: [],
         productsPageClothes: [],
+        brandsData: [],
         basket: [],
         filterGenderCombiner: [],
         filterBrandCombiner: [],
         filterPriceCombiner: [],
         filterItemIdBox: [],
         loading: true,
-        categoryName: "",
+        // categoryName: "",
         productItem: {},
         genderFilterObj: {},
         priceFilterObj: {},
@@ -33,9 +73,12 @@ export const clothesSlice = createSlice({
         error: false
     },
     reducers: {
-        setCategoryName: (state, { payload }) => {
-            state.categoryName = payload
+        fetchFilteredProducts: (state, { payload }) => {
+            console.log('s');
         },
+        // setCategoryName: (state, { payload }) => {
+        //     state.categoryName = payload
+        // },
         setFilteredProducts: (state, { payload }) => {
             state.productsPageClothes = state.data.filter(item => item.category === payload)
 
@@ -357,6 +400,16 @@ export const clothesSlice = createSlice({
             console.log('rejected');
             state.error = action.error.message
             state.pending = false
+        },
+        [fetchCategories.fulfilled]: (state, { payload }) => {
+            state.categoriesData = payload
+        },
+        [fetchFilteredProducts.fulfilled]: (state, { payload }) => {
+            console.log('fetchFilteredProducts fullfilled');
+            state.productsPageClothes = payload
+        },
+        [fetchBrands.fulfilled]: (state, { payload }) => {
+            state.brandsData = payload
         }
     }
 })

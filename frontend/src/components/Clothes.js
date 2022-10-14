@@ -16,7 +16,7 @@ export default function Clothes() {
     }, [clothes.data, clothes.numOfItem]);
 
     function itemInfo(item) {
-        dispatch(setCategoryName(item.category))
+        // dispatch(setCategoryName(item.category))
         // dispatch(setProductItem(item))
         navigate(`product_item/${item._id}`)
     }

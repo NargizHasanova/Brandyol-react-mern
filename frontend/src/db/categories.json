@@ -1,42 +1,32 @@
 [
     {
-        "id": 1,
         "cat": "Sports wear"
     },
     {
-        "id": 2,
-        "cat": "T-shirt"
+        "cat": "T-Shirt"
     },
     {
-        "id": 3,
         "cat": "Jeans"
     },
     {
-        "id": 4,
         "cat": "Sweater"
     },
     {
-        "id": 5,
         "cat": "Underwear"
     },
     {
-        "id": 6,
         "cat": "Shorts"
     },
     {
-        "id": 7,
         "cat": "Skirt"
     },
     {
-        "id": 8,
         "cat": "Jacket"
     },
     {
-        "id": 9,
         "cat": "Blouse"
     },
     {
-        "id": 10,
         "cat": "Dress"
     }
 ]

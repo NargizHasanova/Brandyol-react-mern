@@ -9,10 +9,14 @@ const ProductSchema = new mongoose.Schema(
         category: {
             type: String,
             required: true,
+            trim: true,
+            maxlength: 20,
         },
         brand: {
             type: String,
             required: true,
+            trim: true,
+            maxlength: 20,
         },
         gender: {
             type: String,

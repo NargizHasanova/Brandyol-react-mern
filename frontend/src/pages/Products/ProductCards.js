@@ -13,7 +13,7 @@ export default function ProductCards() {
 
     function itemInfo(item) {
         // dispatch(setProductItem(item))
-        navigate(`/product_item/${item.id}`)
+        navigate(`/product_item/${item._id}`)
     }
 
     function addToFavorites(id, singleItem) {
@@ -29,9 +29,9 @@ export default function ProductCards() {
     return (
         pending ? <WaitingGif /> : (
             productsPageClothes?.map(item => {
-                const { id, images, name, price, category, brand, desc, favorite } = item
+                const { _id, images, name, price, category, brand, desc, favorite } = item
                 return (
-                    <div key={id}
+                    <div key={_id}
                         className="clothes__item"
                         style={{ width: `${filterBarVisible ? "30%" : ""}` }}>
                         <div className="clothes__img">
@@ -48,9 +48,9 @@ export default function ProductCards() {
 
                                         {/* === like === */}
                                         {!favorite &&
-                                            <i onClick={() => addToFavorites(id, item)} className="fas fa-heart"></i>}
+                                            <i onClick={() => addToFavorites(_id, item)} className="fas fa-heart"></i>}
                                         {favorite &&
-                                            <i onClick={() => removeFromFavorites(id)} className="filled-heart"><FaHeart /></i>}
+                                            <i onClick={() => removeFromFavorites(_id)} className="filled-heart"><FaHeart /></i>}
                                     </div>
                                 </div>
                             </div>

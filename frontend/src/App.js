@@ -22,7 +22,7 @@ function App() {
       <HeaderBtm />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="products" element={<Products />} />
+        <Route path="search" element={<Products />} />
         <Route path="product_item/:id" element={<ProductItem />} />
         <Route path="product_cards" element={<ProductCards />} />
         <Route path="basket" element={<Basket />} />
