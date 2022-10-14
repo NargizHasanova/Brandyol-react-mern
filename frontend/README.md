@@ -25,7 +25,7 @@ suallar:
             }) bele dalbadal state-i deyismek olarmi?
         }
 - checkvalidationda debouncing nece edim?erroru srazu gostermesin
--remember me klikinde hnasi funksionalliqlar yazilmalidi?
+- remember me klikinde hnasi funksionalliqlar yazilmalidi?
 
 
 gorulecek isler:
@@ -38,6 +38,8 @@ home pagede search input
 
 postdaki sekil tam acilmirsa skeleton olsun
 selec product after filter
+
+bir nece apiden sorgu gelirse onu nece habdle ede bilerik?
 
 
 

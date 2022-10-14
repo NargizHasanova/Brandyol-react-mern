@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeftLong, faFilter } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
-import { renderFilter, showBar, hideBar, filterGender, filterBrand, filterPrice, fetchFilteredProducts } from '../../redux/clothesSlice'
+import { renderFilter, showBar, hideBar, filterGender, filterBrand, filterPrice, fetchFilteredProducts, selectBrands, checkSelectedBrands } from '../../redux/clothesSlice'
 import { useNavigate } from 'react-router';
 
 export default function Products() {
@@ -18,10 +18,11 @@ export default function Products() {
     const dispatch = useDispatch()
 
     const navigate = useNavigate()
-    const { productsPageClothes, filterBarIsVisible } = useSelector(state => state.clothes)
+    const { productsPageClothes, filterBarIsVisible, selectedBrands, brandsData } = useSelector(state => state.clothes)
     const [rotateArrowGender, setRotateArrowGender] = useState(true)
     const [rotateArrowBrand, setRotateArrowBrand] = useState(true)
     const [rotateArrowPrice, setRotateArrowPrice] = useState(true)
+    const [refetch, setRefetch] = useState(true)
 
     function showFilterBar() {
         dispatch(showBar())
@@ -36,18 +37,22 @@ export default function Products() {
         dispatch(renderFilter())
     }
 
-    function filterClothesByBrand(e, brand) {
-        // dispatch(filterBrand({ [e.target.value]: e.target.checked }))
-        // dispatch(renderFilter())
-        const isBrandSelected = e.target.checked
-        if(isBrandSelected){
-            navigate(`/search/?cat=${categoryName}&brand=${brand}`)
-            dispatch(fetchFilteredProducts({ category: categoryName, brand: brand }))
-        }else{
-            navigate(`/search/?cat=${categoryName}&brand=${brand}`)
-            dispatch(fetchFilteredProducts({ category: categoryName, brand: brand }))
+    useEffect(() => {
+        if (selectedBrands.length > 0) {
+            const brands = selectedBrands.join(",")
+
+            navigate(`/search/?cat=${categoryName}&brand=${brands}`)
+            dispatch(fetchFilteredProducts({ category: categoryName, brand: brands }))
         }
-        
+
+    }, [refetch]);
+
+    console.log(selectedBrands);
+
+    function filterClothesByBrand(e, brand) {
+        dispatch(selectBrands(brand))
+        dispatch(checkSelectedBrands())
+        setRefetch(prev => !prev)
     }
 
     function filterClothesByPrice(e) {

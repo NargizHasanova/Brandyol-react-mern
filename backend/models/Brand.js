@@ -7,6 +7,10 @@ const BrandSchema = new mongoose.Schema(
             trim: true,
             maxlength: 20,
         },
+        selected: {
+            type: Boolean,
+            default: false
+        },
     }
 );
 

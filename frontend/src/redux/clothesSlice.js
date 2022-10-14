@@ -4,7 +4,6 @@ import { Axios } from '../servicesAPI';
 export const fetchClothesData = createAsyncThunk("clothes/fetchClothes",
     async () => {
         const { data } = await Axios.get("/products")
-        // return data.map(item => ({ ...item, totalSum: item.price * item.count }))
         return data
     }
 )
@@ -23,14 +22,10 @@ export const fetchBrands = createAsyncThunk("brands/fetchBrands",
     }
 )
 
-// "http://localhost:4444/search/?cat=&brand=[object%20Object]"
 export const fetchFilteredProducts = createAsyncThunk("search/fetchFilteredProducts",
     async ({ category: cat, brand }) => {
         const isBrand = typeof brand === "string"
         const isCategory = typeof cat === "string"
-        console.log({ isBrand }); // false
-        console.log({ isCategory }); // true
-        console.log(cat);
         console.log(brand);
 
         if (isBrand && isCategory) {
@@ -43,7 +38,6 @@ export const fetchFilteredProducts = createAsyncThunk("search/fetchFilteredProdu
             console.log(data);
             return data
         }
-
     }
 )
 
@@ -55,6 +49,7 @@ export const clothesSlice = createSlice({
         favoriteBox: [],
         productsPageClothes: [],
         brandsData: [],
+        selectedBrands: [],
         basket: [],
         filterGenderCombiner: [],
         filterBrandCombiner: [],
@@ -73,12 +68,25 @@ export const clothesSlice = createSlice({
         error: false
     },
     reducers: {
-        fetchFilteredProducts: (state, { payload }) => {
-            console.log('s');
-        },
         // setCategoryName: (state, { payload }) => {
         //     state.categoryName = payload
         // },
+        selectBrands: (state, { payload }) => {
+            state.brandsData = state.brandsData.map(item => {
+                if (item.brand === payload) {
+                    item.selected = !item.selected
+                }
+                return item
+            })
+        },
+        checkSelectedBrands: (state, { payload }) => {
+            state.brandsData.map(item => {
+                if (item.selected === true) {
+                    state.selectedBrands.push(item.brand)
+                }
+                return item
+            })
+        },
         setFilteredProducts: (state, { payload }) => {
             state.productsPageClothes = state.data.filter(item => item.category === payload)
 
@@ -415,7 +423,7 @@ export const clothesSlice = createSlice({
 })
 
 
-export const { resetFilterBar, renderFilter, filterBrand, filterPrice, filterGender, showMoreClothesItems, showLessClothesItems, setFavoriteInFavBoxToTrue, removeFromBasket, addToBasket, increaseProductItemCount, decreaseProductItemCount, setProductItemSize, showBar, hideBar, setFilteredProducts, setCategoryName, setProductItem, addToFavBox, removeFromFavBox, changeIsFav, setProductItemColor } = clothesSlice.actions
+export const { resetFilterBar, renderFilter, filterBrand, filterPrice, filterGender, showMoreClothesItems, showLessClothesItems, setFavoriteInFavBoxToTrue, removeFromBasket, addToBasket, increaseProductItemCount, decreaseProductItemCount, setProductItemSize, showBar, hideBar, setFilteredProducts, setCategoryName, setProductItem, addToFavBox, removeFromFavBox, changeIsFav, setProductItemColor, selectBrands, checkSelectedBrands } = clothesSlice.actions
 export default clothesSlice.reducer
 
 

@@ -1,143 +1,190 @@
 [
     {
-        "brand": "Mavi"
+        "brand": "Mavi",
+        "selected": false
     },
     {
-        "brand": "Bershka"
+        "brand": "Bershka",
+        "selected": false
     },
     {
-        "brand": "DeFacto"
+        "brand": "DeFacto",
+        "selected": false
     },
     {
-        "brand": "Stradivarius"
+        "brand": "Stradivarius",
+        "selected": false
     },
     {
-        "brand": "Lacoste"
+        "brand": "Lacoste",
+        "selected": false
     },
     {
-        "brand": "Pull & Bear"
+        "brand": "Pull & Bear",
+        "selected": false
     },
     {
-        "brand": "Colin's"
+        "brand": "Colin's",
+        "selected": false
     },
     {
-        "brand": "Mango"
+        "brand": "Mango",
+        "selected": false
     },
     {
-        "brand": "Mayoral"
+        "brand": "Mayoral",
+        "selected": false
     },
     {
-        "brand": "New Laviva"
+        "brand": "New Laviva",
+        "selected": false
     },
     {
-        "brand": "New Balance"
+        "brand": "New Balance",
+        "selected": false
     },
     {
-        "brand": "Koton"
+        "brand": "Koton",
+        "selected": false
     },
     {
-        "brand": "Penti"
+        "brand": "Penti",
+        "selected": false
     },
     {
-        "brand": "LC Waikiki"
+        "brand": "LC Waikiki",
+        "selected": false
     },
     {
-        "brand": "Nike"
+        "brand": "Nike",
+        "selected": false
     },
     {
-        "brand": "Asics"
+        "brand": "Asics",
+        "selected": false
     },
     {
-        "brand": "Mizuno"
+        "brand": "Mizuno",
+        "selected": false
     },
     {
-        "brand": "Julude"
+        "brand": "Julude",
+        "selected": false
     },
     {
-        "brand": "Loft"
+        "brand": "Loft",
+        "selected": false
     },
     {
-        "brand": "D-Paris"
+        "brand": "D-Paris",
+        "selected": false
     },
     {
-        "brand": "Jument"
+        "brand": "Jument",
+        "selected": false
     },
     {
-        "brand": "Ekol"
+        "brand": "Ekol",
+        "selected": false
     },
     {
-        "brand": "Escada"
+        "brand": "Escada",
+        "selected": false
     },
     {
-        "brand": "Lukas"
+        "brand": "Lukas",
+        "selected": false
     },
     {
-        "brand": "Tommy Hilfiger"
+        "brand": "Tommy Hilfiger",
+        "selected": false
     },
     {
-        "brand": "Dockers"
+        "brand": "Dockers",
+        "selected": false
     },
     {
-        "brand": "Mudo"
+        "brand": "Mudo",
+        "selected": false
     },
     {
-        "brand": "Only"
+        "brand": "Only",
+        "selected": false
     },
     {
-        "brand": "DeepSea"
+        "brand": "DeepSea",
+        "selected": false
     },
     {
-        "brand": "Ramsey"
+        "brand": "Ramsey",
+        "selected": false
     },
     {
-        "brand": "Vitrin"
+        "brand": "Vitrin",
+        "selected": false
     },
     {
-        "brand": "Benetton"
+        "brand": "Benetton",
+        "selected": false
     },
     {
-        "brand": "Efor"
+        "brand": "Efor",
+        "selected": false
     },
     {
-        "brand": "Chima"
+        "brand": "Chima",
+        "selected": false
     },
     {
-        "brand": "Robin"
+        "brand": "Robin",
+        "selected": false
     },
     {
-        "brand": "Gusto"
+        "brand": "Gusto",
+        "selected": false
     },
     {
-        "brand": "Avva"
+        "brand": "Avva",
+        "selected": false
     },
     {
-        "brand": "Meteor"
+        "brand": "Meteor",
+        "selected": false
     },
     {
-        "brand": "Solisto"
+        "brand": "Solisto",
+        "selected": false
     },
     {
-        "brand": "Guttavo"
+        "brand": "Guttavo",
+        "selected": false
     },
     {
-        "brand": "Lorenso"
+        "brand": "Lorenso",
+        "selected": false
     },
     {
-        "brand": "Sinistro"
+        "brand": "Sinistro",
+        "selected": false
     },
     {
-        "brand": "Emroli"
+        "brand": "Emroli",
+        "selected": false
     },
     {
-        "brand": "Lampardo"
+        "brand": "Lampardo",
+        "selected": false
     },
     {
-        "brand": "Filorio"
+        "brand": "Filorio",
+        "selected": false
     },
     {
-        "brand": "Mers"
+        "brand": "Mers",
+        "selected": false
     },
     {
-        "brand": "Poppins"
+        "brand": "Poppins",
+        "selected": false
     }
 ]

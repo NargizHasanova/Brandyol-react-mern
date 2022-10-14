@@ -20,7 +20,6 @@ export default function HeaderBtm() {
    const { categoriesData: categories, productsPageClothes } = useSelector(state => state.clothes)
    const dispatch = useDispatch()
    const navigate = useNavigate();
-   console.log(productsPageClothes);
 
    function selectCategory(category) {
       // dispatch(setFilteredProducts(category))

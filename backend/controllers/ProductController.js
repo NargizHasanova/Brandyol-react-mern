@@ -57,17 +57,13 @@ export const getAllBrands = async (req, res) => {
 // }
 // NEW
 export const searchByQueryType = async (req, res) => {
-    // http://localhost:4444/search?cat=Jeans&brand=Mavi
+    // http://localhost:4444/search?cat=Jeans&brand=Mavi,Bershka
     try {
         const category = req.query.cat
-        const brand = req.query.brand || null
-        let filterRes
-        if (brand) {
-            filterRes = await ProductModel.find({ category: category, brand: brand })
-        } else if (!brand) {
-            filterRes = await ProductModel.find({ category: category })
-        }
+        // const brand = req.query.brand || null // "Mavi,Bershka"
+        const brand = { $in: req.query.brand.split(",") }
 
+        const filterRes = await ProductModel.find({ category: category, brand: brand })
 
         return res.json(filterRes)
 
