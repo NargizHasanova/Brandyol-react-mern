@@ -26,7 +26,9 @@ export const fetchFilteredProducts = createAsyncThunk("search/fetchFilteredProdu
     async ({ category: cat, brand }) => {
         const isBrand = typeof brand === "string"
         const isCategory = typeof cat === "string"
-        console.log(brand);
+        console.log('brand', brand);
+        // const { data } = await Axios.get(`/search/?cat=${cat}&brand=${brand}`)
+        // return data
 
         if (isBrand && isCategory) {
             const { data } = await Axios.get(`/search/?cat=${cat}&brand=${brand}`)
@@ -80,12 +82,14 @@ export const clothesSlice = createSlice({
             })
         },
         checkSelectedBrands: (state, { payload }) => {
+            state.selectedBrands = []
             state.brandsData.map(item => {
                 if (item.selected === true) {
                     state.selectedBrands.push(item.brand)
                 }
                 return item
             })
+            state.selectedBrands = [...new Set(state.selectedBrands)]
         },
         setFilteredProducts: (state, { payload }) => {
             state.productsPageClothes = state.data.filter(item => item.category === payload)

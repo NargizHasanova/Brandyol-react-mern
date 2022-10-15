@@ -32,7 +32,7 @@ export default function Brand({ filterClothesByBrand }) {
                                     className='chkbox'
                                     type="checkbox"
                                     value={item.brand}
-                                    onChange={(e) => filterClothesByBrand(e, item.brand)}
+                                    onChange={() => filterClothesByBrand(item.brand)}
                                 />
                                 <span>{item.brand}</span>
                             </div>

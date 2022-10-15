@@ -61,9 +61,14 @@ export const searchByQueryType = async (req, res) => {
     try {
         const category = req.query.cat
         // const brand = req.query.brand || null // "Mavi,Bershka"
-        const brand = { $in: req.query.brand.split(",") }
+        const brand = req.query.brand ? { $in: req.query.brand.split(",") } : null
+        let filterRes
 
-        const filterRes = await ProductModel.find({ category: category, brand: brand })
+        if (brand) {
+            filterRes = await ProductModel.find({ category: category, brand: brand })
+        } else {
+            filterRes = await ProductModel.find({ category: category })
+        }
 
         return res.json(filterRes)
 

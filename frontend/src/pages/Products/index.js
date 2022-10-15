@@ -39,17 +39,17 @@ export default function Products() {
 
     useEffect(() => {
         if (selectedBrands.length > 0) {
+            console.log('useffect');
             const brands = selectedBrands.join(",")
-
             navigate(`/search/?cat=${categoryName}&brand=${brands}`)
             dispatch(fetchFilteredProducts({ category: categoryName, brand: brands }))
         }
 
     }, [refetch]);
 
-    console.log(selectedBrands);
+    console.log('selectedBrands', selectedBrands);
 
-    function filterClothesByBrand(e, brand) {
+    function filterClothesByBrand(brand) {
         dispatch(selectBrands(brand))
         dispatch(checkSelectedBrands())
         setRefetch(prev => !prev)
