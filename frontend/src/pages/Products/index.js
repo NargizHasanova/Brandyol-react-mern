@@ -2,12 +2,13 @@ import React, { useEffect } from 'react'
 import Brand from './Brand'
 import ProductCards from './ProductCards';
 import { useState } from 'react';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeftLong, faFilter } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
-import { renderFilter, showBar, hideBar, filterGender, filterBrand, filterPrice, fetchFilteredProducts, selectBrands, checkSelectedBrands } from '../../redux/clothesSlice'
+import { renderFilter, showBar, hideBar, filterGender, filterBrand, filterPrice, fetchFilteredProducts, selectBrands, checkSelectedBrands, resetSelectedBrands } from '../../redux/clothesSlice'
 import { useNavigate } from 'react-router';
+import CardSkeleton from './ProductSkeleton';
+import Skeleton from 'react-loading-skeleton';
 
 export default function Products() {
     const query = () => {
@@ -18,7 +19,7 @@ export default function Products() {
     const dispatch = useDispatch()
 
     const navigate = useNavigate()
-    const { productsPageClothes, filterBarIsVisible, selectedBrands, brandsData } = useSelector(state => state.clothes)
+    const { productsPageClothes, isSelectedBrandsEmpty, filterBarIsVisible, selectedBrands, brandsData } = useSelector(state => state.clothes)
     const [rotateArrowGender, setRotateArrowGender] = useState(true)
     const [rotateArrowBrand, setRotateArrowBrand] = useState(true)
     const [rotateArrowPrice, setRotateArrowPrice] = useState(true)
@@ -39,15 +40,16 @@ export default function Products() {
 
     useEffect(() => {
         if (selectedBrands.length > 0) {
-            console.log('useffect');
             const brands = selectedBrands.join(",")
             navigate(`/search/?cat=${categoryName}&brand=${brands}`)
             dispatch(fetchFilteredProducts({ category: categoryName, brand: brands }))
         }
-
+        if(isSelectedBrandsEmpty){
+            console.log({isSelectedBrandsEmpty});
+            dispatch(fetchFilteredProducts({ category: categoryName }))
+            dispatch(resetSelectedBrands())
+        }  
     }, [refetch]);
-
-    console.log('selectedBrands', selectedBrands);
 
     function filterClothesByBrand(brand) {
         dispatch(selectBrands(brand))
@@ -61,8 +63,10 @@ export default function Products() {
     }
 
     return (
-        productsPageClothes?.length === 0 ? <span>skeleton</span> : <section className='products container'>
-            <h3 className="search_results">{productsPageClothes?.length} results are listed for the search "{categoryName}"</h3>
+        <section className='products container'>
+            {productsPageClothes.length === 0
+                ? <Skeleton width="380px" height="20px" />
+                : <h3 className="search_results">{productsPageClothes?.length} results are listed for the search "{categoryName}"</h3>}
             <div className="products-wrapper">
                 <div className={`products__filterBar ${filterBarIsVisible ? "position-left" : ""}`}>
                     <i className='filter-back' onClick={hideFilterBar}>

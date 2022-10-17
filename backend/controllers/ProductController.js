@@ -41,20 +41,6 @@ export const getAllBrands = async (req, res) => {
     }
 }
 
-//GET PRODUCT BY CATEGORY
-// export const getFilteredProducts = async (req, res) => {
-//     // http://localhost:4444/products?cat=Jeans&brand=Mavi
-
-//     try {
-//         const filteredProducts = await ProductModel.find({ category: req.query.cat, brand: req.query.brand })
-//         return res.json(filteredProducts)
-//     } catch (err) {
-//         return res.status(500).json({
-//             message: 'could not get product by category',
-//             error: err.message,
-//         })
-//     }
-// }
 // NEW
 export const searchByQueryType = async (req, res) => {
     // http://localhost:4444/search?cat=Jeans&brand=Mavi,Bershka
@@ -79,7 +65,6 @@ export const searchByQueryType = async (req, res) => {
         })
     }
 }
-
 
 // GET SINGLE PRODUCT
 export const getSingleProduct = async (req, res) => {

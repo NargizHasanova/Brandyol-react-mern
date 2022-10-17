@@ -26,18 +26,12 @@ export const fetchFilteredProducts = createAsyncThunk("search/fetchFilteredProdu
     async ({ category: cat, brand }) => {
         const isBrand = typeof brand === "string"
         const isCategory = typeof cat === "string"
-        console.log('brand', brand);
-        // const { data } = await Axios.get(`/search/?cat=${cat}&brand=${brand}`)
-        // return data
 
         if (isBrand && isCategory) {
             const { data } = await Axios.get(`/search/?cat=${cat}&brand=${brand}`)
-            console.log("ikiside true");
             return data
         } else if (isCategory) {
-            console.log('category true');
             const { data } = await Axios.get(`/search/?cat=${cat}`)
-            console.log(data);
             return data
         }
     }
@@ -52,13 +46,13 @@ export const clothesSlice = createSlice({
         productsPageClothes: [],
         brandsData: [],
         selectedBrands: [],
+        isSelectedBrandsEmpty: false,
         basket: [],
         filterGenderCombiner: [],
         filterBrandCombiner: [],
         filterPriceCombiner: [],
         filterItemIdBox: [],
         loading: true,
-        // categoryName: "",
         productItem: {},
         genderFilterObj: {},
         priceFilterObj: {},
@@ -70,9 +64,6 @@ export const clothesSlice = createSlice({
         error: false
     },
     reducers: {
-        // setCategoryName: (state, { payload }) => {
-        //     state.categoryName = payload
-        // },
         selectBrands: (state, { payload }) => {
             state.brandsData = state.brandsData.map(item => {
                 if (item.brand === payload) {
@@ -83,17 +74,27 @@ export const clothesSlice = createSlice({
         },
         checkSelectedBrands: (state, { payload }) => {
             state.selectedBrands = []
+
+            if (state.brandsData.every(item => item.selected === false)) {
+                state.isSelectedBrandsEmpty = true
+                fetchFilteredProducts({ category: payload })
+                return
+            }
+
             state.brandsData.map(item => {
                 if (item.selected === true) {
                     state.selectedBrands.push(item.brand)
                 }
                 return item
             })
+
             state.selectedBrands = [...new Set(state.selectedBrands)]
         },
         setFilteredProducts: (state, { payload }) => {
             state.productsPageClothes = state.data.filter(item => item.category === payload)
-
+        },
+        resetSelectedBrands: (state) => {
+            state.selectedBrands = []
         },
         resetFilterBar: (state) => {
             state.filterGenderCombiner = []
@@ -103,7 +104,6 @@ export const clothesSlice = createSlice({
             state.genderFilterObj = {}
             state.brandFilterObj = {}
             state.priceFilterObj = {}
-            // state.data.map(item=>item.)
         },
         setProductItem: (state, { payload } = state.productItem) => {
             state.productItem = payload
@@ -226,7 +226,7 @@ export const clothesSlice = createSlice({
                     state.filterGenderCombiner.splice(state.filterGenderCombiner.indexOf(key), 1)
                 }
             }
-            state.filterGenderCombiner = [...new Set(state.filterGenderCombiner)] // her defe yeni true olanlar ust uste yazilmasin deye(["male","male","female"]) ve productsPageClothesdaki kimi sifirlaya bilmirik deye bele unikal deyerleri qaytaririq (["male","female"]) 
+            state.filterGenderCombiner = [...new Set(state.filterGenderCombiner)]
         },
         renderFilter: (state) => {
             // filterCombiner = ["female","male"]
@@ -416,6 +416,9 @@ export const clothesSlice = createSlice({
         [fetchCategories.fulfilled]: (state, { payload }) => {
             state.categoriesData = payload
         },
+        [fetchFilteredProducts.pending]: (state, { payload }) => {
+            state.productsPageClothes = [] // skeleton gorsensin deye her category seciminde 
+        },
         [fetchFilteredProducts.fulfilled]: (state, { payload }) => {
             console.log('fetchFilteredProducts fullfilled');
             state.productsPageClothes = payload
@@ -427,7 +430,8 @@ export const clothesSlice = createSlice({
 })
 
 
-export const { resetFilterBar, renderFilter, filterBrand, filterPrice, filterGender, showMoreClothesItems, showLessClothesItems, setFavoriteInFavBoxToTrue, removeFromBasket, addToBasket, increaseProductItemCount, decreaseProductItemCount, setProductItemSize, showBar, hideBar, setFilteredProducts, setCategoryName, setProductItem, addToFavBox, removeFromFavBox, changeIsFav, setProductItemColor, selectBrands, checkSelectedBrands } = clothesSlice.actions
+export const { resetFilterBar, renderFilter, filterBrand, filterPrice, filterGender, showMoreClothesItems, showLessClothesItems, setFavoriteInFavBoxToTrue, removeFromBasket, addToBasket, increaseProductItemCount, decreaseProductItemCount, setProductItemSize, showBar, hideBar, setFilteredProducts, setCategoryName, setProductItem, addToFavBox, removeFromFavBox, changeIsFav, setProductItemColor, selectBrands, checkSelectedBrands, resetSelectedBrands } = clothesSlice.actions
+
 export default clothesSlice.reducer
 
 

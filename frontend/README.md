@@ -41,6 +41,8 @@ selec product after filter
 
 bir nece apiden sorgu gelirse onu nece habdle ede bilerik?
 
+asynthunki reducersin icinde nece istifade ede bilerem?
+
 
 
 

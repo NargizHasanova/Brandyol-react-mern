@@ -36,7 +36,7 @@ export default function HeaderBtm() {
 
    return (
       <section className='headerBtm container'>
-         {categories.length === 0 ? <span>skeleton</span> : <Swiper
+         {categories.length > 0 && <Swiper
             loop={false}
             grabCursor={true}
             spaceBetween={0}
