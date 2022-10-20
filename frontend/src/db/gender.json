@@ -1,0 +1,17 @@
+[
+    {
+        "id": "1",
+        "gender": "male",
+        "selected": false
+    },
+    {
+        "id": 2,
+        "gender": "female",
+        "selected": false
+    },
+    {
+        "id": 3,
+        "gender": "child",
+        "selected": false
+    }
+]

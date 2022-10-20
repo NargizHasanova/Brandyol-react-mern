@@ -7,7 +7,7 @@ import fs from 'fs';
 import dotenv from 'dotenv'
 import { getMe, login, register } from "./controllers/UserController.js";
 import { loginValidation, registerValidation } from "./validations.js";
-import { getAllBrands, getAllCategories, getAllProducts, getSingleProduct, searchByQueryType } from "./controllers/ProductController.js";
+import { getAllBrands, getAllCategories, getAllGenders, getAllProducts, getSingleProduct, searchByQueryType } from "./controllers/ProductController.js";
 import handleValidationErrors from "./middleware/handleValidationErrors.js";
 
 
@@ -52,6 +52,7 @@ app.get("/products/:id", getSingleProduct)
 app.get("/categories", getAllCategories)
 // app.get("/category", getFilteredProducts)
 app.get("/brands", getAllBrands)
+app.get("/genders", getAllGenders)
 app.get("/search", searchByQueryType)
 
 app.listen(process.env.PORT || 4444, (err) => {

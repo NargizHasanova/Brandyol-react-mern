@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { genders } from "../db/gender";
 import { Axios } from '../servicesAPI';
 
 export const fetchClothesData = createAsyncThunk("clothes/fetchClothes",
@@ -21,16 +22,34 @@ export const fetchBrands = createAsyncThunk("brands/fetchBrands",
         return data
     }
 )
+export const fetchGenders = createAsyncThunk("genders/fetchGenders",
+    async () => {
+        const { data } = await Axios.get(`/genders`)
+        return data
+    }
+)
 
 export const fetchFilteredProducts = createAsyncThunk("search/fetchFilteredProducts",
-    async ({ category: cat, brand }) => {
+    async ({ category: cat, brand, gender, price }) => {
         const isBrand = typeof brand === "string"
-        const isCategory = typeof cat === "string"
-
-        if (isBrand && isCategory) {
+        // const isCategory = typeof cat === "string"
+        const isGender = typeof gender === "string"
+        // const isPrice = typeof price === "string"
+        console.log(gender); // undefined
+        if (isBrand && isGender) {
+            console.log('isBrand and isGender');
+            const { data } = await Axios.get(`/search/?cat=${cat}&brand=${brand}&gender=${gender}`)
+            return data
+        } else if (isBrand) {
+            console.log('isBrand');
             const { data } = await Axios.get(`/search/?cat=${cat}&brand=${brand}`)
             return data
-        } else if (isCategory) {
+        } else if (isGender) {
+            console.log('isGender');
+            const { data } = await Axios.get(`/search/?cat=${cat}&gender=${gender}`)
+            return data
+        } else {
+            console.log('fetchFilteredProducts else');
             const { data } = await Axios.get(`/search/?cat=${cat}`)
             return data
         }
@@ -45,8 +64,14 @@ export const clothesSlice = createSlice({
         favoriteBox: [],
         productsPageClothes: [],
         brandsData: [],
+        gendersData: [],
         selectedBrands: [],
-        isSelectedBrandsEmpty: false,
+        selectedGenders: [],
+        selectedPrices: [],
+        isSelectedBrandsEmpty: true,
+        isSelectedGendersEmpty: true,
+        // isSelectedPricesEmpty: false,
+        // ==================
         basket: [],
         filterGenderCombiner: [],
         filterBrandCombiner: [],
@@ -72,12 +97,40 @@ export const clothesSlice = createSlice({
                 return item
             })
         },
+        selectGenders: (state, { payload }) => {
+
+            state.gendersData = state.gendersData.map(item => {
+                if (item.gender === payload) {
+                    item.selected = !item.selected
+                }
+                return item
+            })
+        },
+        checkSelectedGenders: (state, { payload }) => {
+            state.selectedGenders = []
+            let genderIsEmpty = state.gendersData.every(item => item.selected === false)
+
+            if (genderIsEmpty) {
+                state.isSelectedGendersEmpty = true
+                return
+            }
+
+            state.gendersData.map(item => {
+                if (item.selected === true) {
+                    state.selectedGenders.push(item.gender)
+                }
+                return item
+            })
+            state.isSelectedBrandsEmpty = false
+
+            state.selectedGenders = [...new Set(state.selectedGenders)]
+        },
         checkSelectedBrands: (state, { payload }) => {
             state.selectedBrands = []
+            let brandIsEmpty = state.brandsData.every(item => item.selected === false)
 
-            if (state.brandsData.every(item => item.selected === false)) {
+            if (brandIsEmpty) {
                 state.isSelectedBrandsEmpty = true
-                fetchFilteredProducts({ category: payload })
                 return
             }
 
@@ -87,15 +140,22 @@ export const clothesSlice = createSlice({
                 }
                 return item
             })
+            state.isSelectedBrandsEmpty = false
 
             state.selectedBrands = [...new Set(state.selectedBrands)]
         },
         setFilteredProducts: (state, { payload }) => {
             state.productsPageClothes = state.data.filter(item => item.category === payload)
         },
+        resetSelectedGenders: (state) => {
+            state.selectedGenders = []
+            // state.isSelectedBrandsEmpty = true
+        },
         resetSelectedBrands: (state) => {
             state.selectedBrands = []
         },
+
+        // ================
         resetFilterBar: (state) => {
             state.filterGenderCombiner = []
             state.filterBrandCombiner = []
@@ -424,13 +484,22 @@ export const clothesSlice = createSlice({
             state.productsPageClothes = payload
         },
         [fetchBrands.fulfilled]: (state, { payload }) => {
+            console.log('brands fullfilled');
             state.brandsData = payload
-        }
+        },
+        [fetchGenders.fulfilled]: (state, { payload }) => {
+            console.log('genders fullfilled');
+            state.gendersData = payload
+        },
+        [fetchGenders.rejected]: (state, { payload }) => {
+            console.log(state);
+            
+        },
     }
 })
 
 
-export const { resetFilterBar, renderFilter, filterBrand, filterPrice, filterGender, showMoreClothesItems, showLessClothesItems, setFavoriteInFavBoxToTrue, removeFromBasket, addToBasket, increaseProductItemCount, decreaseProductItemCount, setProductItemSize, showBar, hideBar, setFilteredProducts, setCategoryName, setProductItem, addToFavBox, removeFromFavBox, changeIsFav, setProductItemColor, selectBrands, checkSelectedBrands, resetSelectedBrands } = clothesSlice.actions
+export const { resetFilterBar, renderFilter, filterBrand, filterPrice, filterGender, showMoreClothesItems, showLessClothesItems, setFavoriteInFavBoxToTrue, removeFromBasket, addToBasket, increaseProductItemCount, decreaseProductItemCount, setProductItemSize, showBar, hideBar, setFilteredProducts, setCategoryName, setProductItem, addToFavBox, removeFromFavBox, changeIsFav, setProductItemColor, selectBrands, checkSelectedBrands, resetSelectedGenders, resetSelectedBrands, selectGenders, checkSelectedGenders } = clothesSlice.actions
 
 export default clothesSlice.reducer
 

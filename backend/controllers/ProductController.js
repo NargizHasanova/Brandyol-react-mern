@@ -1,6 +1,7 @@
 import ProductModel from '../models/Product.js'
 import CategoryModel from '../models/Category.js'
 import BrandModel from '../models/Brand.js'
+import GenderModel from '../models/Gender.js'
 
 //GET ALL PRODUCTS
 export const getAllProducts = async (req, res) => {
@@ -41,18 +42,42 @@ export const getAllBrands = async (req, res) => {
     }
 }
 
+//GET ALL GENDERS
+export const getAllGenders = async (req, res) => {
+    try {
+        let genders = await GenderModel.find()
+        return res.json(genders)
+    } catch (err) {
+        return res.status(500).json({
+            message: 'could not get genders',
+            error: err.message,
+        })
+    }
+}
+
 // NEW
 export const searchByQueryType = async (req, res) => {
     // http://localhost:4444/search?cat=Jeans&brand=Mavi,Bershka
     try {
         const category = req.query.cat
-        // const brand = req.query.brand || null // "Mavi,Bershka"
         const brand = req.query.brand ? { $in: req.query.brand.split(",") } : null
-        let filterRes
+        const gender = req.query.gender ? { $in: req.query.gender.split(",") } : null
+        // const price = req.query.price ? { $in: req.query.price.split(",") } : null
 
-        if (brand) {
+        let filterRes
+        // if (brand && gender && price) {
+        //     filterRes = await ProductModel.find({ category: category, brand: brand, gender: gender, price: price })
+        // }
+         if (brand && gender) {
+            filterRes = await ProductModel.find({ category: category, brand: brand, gender: gender })
+        }
+        else if (brand) {
             filterRes = await ProductModel.find({ category: category, brand: brand })
-        } else {
+        }
+        else if (gender) {
+            filterRes = await ProductModel.find({ category: category, gender: gender })
+        }
+        else {
             filterRes = await ProductModel.find({ category: category })
         }
 
