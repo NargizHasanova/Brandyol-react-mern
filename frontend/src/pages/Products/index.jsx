@@ -6,30 +6,30 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeftLong, faFilter } from '@fortawesome/free-solid-svg-icons'
 import { useDispatch, useSelector } from 'react-redux'
 import {
-  renderFilter,
   showBar,
   hideBar,
-  filterGender,
-  filterBrand,
-  filterPrice,
   fetchFilteredProducts,
   selectBrands,
   checkSelectedBrands,
-  resetSelectedBrands,
   selectGenders,
   checkSelectedGenders,
-  resetSelectedCategories,
-  resetSelectedGenders,
   fetchGenders,
+  fetchPrices,
+  selectPrices,
+  checkSelectedPrices,
+  isSelectedPricesEmpty
 } from '../../redux/clothesSlice'
 import { useNavigate } from 'react-router'
 import Skeleton from 'react-loading-skeleton'
 import Checkbox from '@mui/material/Checkbox'
+import FormGroup from '@mui/material/FormGroup'
+import FormControlLabel from '@mui/material/FormControlLabel'
 
 export default function Products() {
   const query = () => {
     return new URLSearchParams(window.location.search)
   }
+
   const categoryName = query().get('cat')
 
   const dispatch = useDispatch()
@@ -43,6 +43,7 @@ export default function Products() {
     filterBarIsVisible,
     selectedBrands,
     selectedGenders,
+    pricesData
   } = useSelector((state) => state.clothes)
   const [rotateArrowGender, setRotateArrowGender] = useState(true)
   const [rotateArrowBrand, setRotateArrowBrand] = useState(true)
@@ -65,14 +66,16 @@ export default function Products() {
 
   useEffect(() => {
     dispatch(fetchGenders())
+    dispatch(fetchPrices())
   }, [])
 
+
   useEffect(() => {
-    if (!isSelectedBrandsEmpty && !isSelectedGendersEmpty) {
-      console.log('!isSelectedBrandsEmpty && !isSelectedGendersEmpty')
+    if (!isSelectedBrandsEmpty && !isSelectedGendersEmpty && !isSelectedPricesEmpty) {
+      console.log('brand ve gender var')
       const brands = selectedBrands.join(',')
-      const genders = selectGenders.join(',')
-      navigate(`/search/?cat=${categoryName}&brand=${brands}&gender=${genders}`)
+      const genders = selectedGenders.join(',')
+      navigate(`/search/?cat=${categoryName}&brand=${brands}&gender=${genders}&minPrice=${}`)
       dispatch(
         fetchFilteredProducts({
           category: categoryName,
@@ -80,35 +83,27 @@ export default function Products() {
           gender: genders,
         }),
       )
-    } else if (!isSelectedGendersEmpty) {
-      console.log('!isSelectedGendersEmpty')
+    } 
+    else if (!isSelectedBrandsEmpty && isSelectedGendersEmpty) {
+      console.log('ancaq brand var')
+      const brands = selectedBrands.join(',')
+      navigate(`/search/?cat=${categoryName}&brand=${brands}`)
+      dispatch(fetchFilteredProducts({ category: categoryName, brand: brands }))
+    }
+     else if (isSelectedBrandsEmpty && !isSelectedGendersEmpty) {
+      console.log('ancaq gender var')
       const genders = selectedGenders.join(',')
       navigate(`/search/?cat=${categoryName}&gender=${genders}`)
       dispatch(
         fetchFilteredProducts({ category: categoryName, gender: genders }),
       )
-    } else if (!isSelectedBrandsEmpty) {
-      console.log('!isSelectedBrandsEmpty')
-      const brands = selectedBrands.join(',')
-      navigate(`/search/?cat=${categoryName}&brand=${brands}`)
-      dispatch(fetchFilteredProducts({ category: categoryName, brand: brands }))
     }
-    // if (isSelectedBrandsEmpty ) {
-    //   dispatch(fetchFilteredProducts({ category: categoryName }))
-    //   navigate(`/search/?cat=${categoryName}`)
-    //   dispatch(resetSelectedBrands())
-    // }
-    // if (isSelectedGendersEmpty ) {
-    //   dispatch(fetchFilteredProducts({ category: categoryName }))
-    //   navigate(`/search/?cat=${categoryName}`)
-    //   dispatch(resetSelectedGenders())
-    // }
-    // if (isSelectedPricesEmpty) {
-    //     dispatch(fetchFilteredProducts({ category: categoryName }))
-    //     dispatch(resetSelectedPrices())
-    // }
+     else if (isSelectedBrandsEmpty && isSelectedGendersEmpty) {
+      console.log('ikiside empty')
+      navigate(`/search/?cat=${categoryName}`)
+      dispatch(fetchFilteredProducts({ category: categoryName }))
+    }
   }, [refetch])
-  // empty meselsesini her item ucun ayri olmalidi min variantda yazilmalidi
 
   function filterClothesByBrand(brand) {
     dispatch(selectBrands(brand))
@@ -116,10 +111,12 @@ export default function Products() {
     setRefetch((prev) => !prev)
   }
 
-  function filterClothesByPrice(e) {
-    dispatch(filterPrice({ [e.target.value]: e.target.checked }))
-    dispatch(renderFilter())
+  function filterClothesByPrice(minPrice, maxPrice) {
+    dispatch(selectPrices(minPrice))
+    dispatch(checkSelectedPrices())
+    setRefetch((prev) => !prev)
   }
+  console.log(pricesData);
 
   return (
     <section className="products container">
@@ -155,22 +152,20 @@ export default function Products() {
             <div
               className={`option ${rotateArrowGender ? 'd-block' : 'd-none'}`}
             >
-              {gendersData.map((item) => (
-                <div key={item._id} className="gender-option">
-                  <label htmlFor="gender">
-                    <Checkbox
-                      onChange={() => filterClothesByGender(item.gender)}
-                    />
-                  </label>
-                  <input
-                    className="chkbox"
-                    type="checkbox"
-                    id="gender"
-                    style={{ display: 'none' }}
+              <FormGroup>
+                {gendersData.map((item) => (
+                  <FormControlLabel
+                    style={{ margin: '-10px' }}
+                    key={item._id}
+                    control={
+                      <Checkbox
+                        onChange={() => filterClothesByGender(item.gender)}
+                      />
+                    }
+                    label={item.gender}
                   />
-                  <span>{item.gender}</span>
-                </div>
-              ))}
+                ))}
+              </FormGroup>
             </div>
           </div>
           <div className="filterItem">
@@ -206,7 +201,23 @@ export default function Products() {
             <div
               className={`option ${rotateArrowPrice ? 'd-block' : 'd-none'}`}
             >
-              <div className="price-option">
+              <FormGroup>
+                {pricesData.map((item) => (
+                  <FormControlLabel
+                    style={{ margin: '-10px' }}
+                    key={item._id}
+                    control={
+                      <Checkbox
+                        onChange={() =>
+                          filterClothesByPrice(item.minPrice, item.maxPrice)
+                        }
+                      />
+                    }
+                    label={`${item.minPrice}$-${item.maxPrice}$`}
+                  />
+                ))}
+              </FormGroup>
+              {/* <div className="price-option">
                 <input
                   className="chkbox"
                   type="checkbox"
@@ -245,7 +256,7 @@ export default function Products() {
                   onChange={filterClothesByPrice}
                 />
                 <span>350$-2250$</span>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

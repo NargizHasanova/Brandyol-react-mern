@@ -2,6 +2,9 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchBrands } from './../../redux/clothesSlice';
+import Checkbox from '@mui/material/Checkbox'
+import FormGroup from '@mui/material/FormGroup'
+import FormControlLabel from '@mui/material/FormControlLabel'
 
 
 export default function Brand({ filterClothesByBrand }) {
@@ -9,11 +12,9 @@ export default function Brand({ filterClothesByBrand }) {
     const dispatch = useDispatch()
     const { brandsData } = useSelector(state => state.clothes)
 
-
     useEffect(() => {
         dispatch(fetchBrands())
     }, []);
-
 
     return (
         <>
@@ -23,7 +24,25 @@ export default function Brand({ filterClothesByBrand }) {
                 type="text"
                 placeholder='choose brand' />
             <div className="brand-stock">
-                {brandsData.map((item) => {
+                <FormGroup>
+                    {brandsData.map((item) => {
+                        if (item.brand.toLowerCase().includes(brandValue.toLowerCase())) {
+                            return (
+                                <FormControlLabel
+                                    style={{ margin: '-7px -10px' }}
+                                    key={item._id}
+                                    control={
+                                        <Checkbox
+                                            onChange={() => filterClothesByBrand(item.brand)}
+                                        />
+                                    }
+                                    label={item.brand}
+                                />
+                            )
+                        }
+                    })}
+                </FormGroup>
+                {/* {brandsData.map((item) => {
                     if (item.brand.toLowerCase().includes(brandValue.toLowerCase())) {
                         return (
                             <div key={item._id} className="brand-option">
@@ -38,7 +57,7 @@ export default function Brand({ filterClothesByBrand }) {
                             </div>
                         )
                     }
-                })}
+                })} */}
             </div>
         </>
     )

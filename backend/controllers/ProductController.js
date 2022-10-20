@@ -2,6 +2,7 @@ import ProductModel from '../models/Product.js'
 import CategoryModel from '../models/Category.js'
 import BrandModel from '../models/Brand.js'
 import GenderModel from '../models/Gender.js'
+import PriceModel from '../models/Price.js'
 
 //GET ALL PRODUCTS
 export const getAllProducts = async (req, res) => {
@@ -42,7 +43,7 @@ export const getAllBrands = async (req, res) => {
     }
 }
 
-//GET ALL GENDERS
+// GET ALL GENDERS
 export const getAllGenders = async (req, res) => {
     try {
         let genders = await GenderModel.find()
@@ -55,6 +56,19 @@ export const getAllGenders = async (req, res) => {
     }
 }
 
+// GET ALL PRICES
+export const getAllPrices = async (req, res) => {
+    try {
+        let prices = await PriceModel.find()
+        return res.json(prices)
+    } catch (err) {
+        return res.status(500).json({
+            message: 'could not get prices',
+            error: err.message,
+        })
+    }
+}
+
 // NEW
 export const searchByQueryType = async (req, res) => {
     // http://localhost:4444/search?cat=Jeans&brand=Mavi,Bershka
@@ -62,13 +76,14 @@ export const searchByQueryType = async (req, res) => {
         const category = req.query.cat
         const brand = req.query.brand ? { $in: req.query.brand.split(",") } : null
         const gender = req.query.gender ? { $in: req.query.gender.split(",") } : null
-        // const price = req.query.price ? { $in: req.query.price.split(",") } : null
+        const minPrice = req.query.minPrice ? req.query.minPrice : null
+        const maxPrice = req.query.maxPrice ? req.query.maxPrice : null
 
         let filterRes
-        // if (brand && gender && price) {
-        //     filterRes = await ProductModel.find({ category: category, brand: brand, gender: gender, price: price })
-        // }
-         if (brand && gender) {
+        if (brand && gender && minPrice) {
+            filterRes = await ProductModel.find({ category: category, brand: brand, gender: gender, price: price })
+        }
+        else if (brand && gender) {
             filterRes = await ProductModel.find({ category: category, brand: brand, gender: gender })
         }
         else if (brand) {
@@ -76,6 +91,9 @@ export const searchByQueryType = async (req, res) => {
         }
         else if (gender) {
             filterRes = await ProductModel.find({ category: category, gender: gender })
+        }
+        else if (minPrice) {
+            filterRes = await ProductModel.find({ category: category, price: { $gt: minPrice, $lt: maxPrice } })
         }
         else {
             filterRes = await ProductModel.find({ category: category })

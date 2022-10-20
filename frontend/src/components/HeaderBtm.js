@@ -30,7 +30,6 @@ export default function HeaderBtm() {
    }
 
    useEffect(() => {
-      console.log('fetchCategories');
       dispatch(fetchCategories())
    }, []);
 

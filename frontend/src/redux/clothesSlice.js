@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { genders } from "../db/gender";
 import { Axios } from '../servicesAPI';
 
 export const fetchClothesData = createAsyncThunk("clothes/fetchClothes",
@@ -22,6 +21,7 @@ export const fetchBrands = createAsyncThunk("brands/fetchBrands",
         return data
     }
 )
+
 export const fetchGenders = createAsyncThunk("genders/fetchGenders",
     async () => {
         const { data } = await Axios.get(`/genders`)
@@ -29,16 +29,33 @@ export const fetchGenders = createAsyncThunk("genders/fetchGenders",
     }
 )
 
+export const fetchPrices = createAsyncThunk("prices/fetchPrices",
+    async () => {
+        const { data } = await Axios.get(`/prices`)
+        return data
+    }
+)
+
 export const fetchFilteredProducts = createAsyncThunk("search/fetchFilteredProducts",
     async ({ category: cat, brand, gender, price }) => {
         const isBrand = typeof brand === "string"
-        // const isCategory = typeof cat === "string"
         const isGender = typeof gender === "string"
-        // const isPrice = typeof price === "string"
-        console.log(gender); // undefined
-        if (isBrand && isGender) {
+        const isPrice = typeof price === "number"
+        if (isBrand && isGender && isPrice) {
+            console.log('isBrand and isGender and isPrice');
+            const { data } = await Axios.get(`/search/?cat=${cat}&brand=${brand}&gender=${gender}&price=${price}`)
+            return data
+        } else if (isBrand && isGender) {
             console.log('isBrand and isGender');
             const { data } = await Axios.get(`/search/?cat=${cat}&brand=${brand}&gender=${gender}`)
+            return data
+        } else if (isBrand && isPrice) {
+            console.log('isBrand and isGender');
+            const { data } = await Axios.get(`/search/?cat=${cat}&brand=${brand}&price=${price}`)
+            return data
+        } else if (isGender && isPrice) {
+            console.log('isBrand and isGender');
+            const { data } = await Axios.get(`/search/?cat=${cat}&price=${price}&gender=${gender}`)
             return data
         } else if (isBrand) {
             console.log('isBrand');
@@ -47,6 +64,10 @@ export const fetchFilteredProducts = createAsyncThunk("search/fetchFilteredProdu
         } else if (isGender) {
             console.log('isGender');
             const { data } = await Axios.get(`/search/?cat=${cat}&gender=${gender}`)
+            return data
+        } else if (isPrice) {
+            console.log('isPrice');
+            const { data } = await Axios.get(`/search/?cat=${cat}&price=${price}`)
             return data
         } else {
             console.log('fetchFilteredProducts else');
@@ -62,15 +83,20 @@ export const clothesSlice = createSlice({
         data: [],
         categoriesData: [],
         favoriteBox: [],
+        // products list page after clicking on category(ex:t-shirt)(headerBtm comp.)
         productsPageClothes: [],
+        // Filters Data
         brandsData: [],
         gendersData: [],
+        pricesData: [],
+        // Selected Filters 
         selectedBrands: [],
         selectedGenders: [],
         selectedPrices: [],
+        // not Selected Filters
         isSelectedBrandsEmpty: true,
         isSelectedGendersEmpty: true,
-        // isSelectedPricesEmpty: false,
+        isSelectedPricesEmpty: true,
         // ==================
         basket: [],
         filterGenderCombiner: [],
@@ -98,13 +124,44 @@ export const clothesSlice = createSlice({
             })
         },
         selectGenders: (state, { payload }) => {
-
             state.gendersData = state.gendersData.map(item => {
                 if (item.gender === payload) {
                     item.selected = !item.selected
                 }
                 return item
             })
+        },
+        selectPrices: (state, { payload }) => {
+            state.pricesData = state.pricesData.map(item => {
+                if (item.minPrice === payload) {
+                    item.selected = !item.selected
+                } else {
+                    item.selected = false
+                } // bele yazaraq hemise ancaq bir optionu sececek
+                return item
+            })
+        },
+        checkSelectedPrices: (state, { payload }) => {
+            state.selectedPrices = []
+            let priceIsEmpty = state.pricesData.every(item => item.selected === false)
+
+            if (priceIsEmpty) {
+                state.isSelectedPricesEmpty = true
+                return
+            }
+
+            state.pricesData.map(item => {
+                if (item.selected === true) {
+                    state.selectedPrices.push({
+                        minPrice: item.minPrice,
+                        maxPrice: item.maxPrice
+                    })
+                }
+                return item
+            })
+            state.isSelectedPricesEmpty = false
+
+            state.selectedPrices = [...new Set(state.selectedPrices)]
         },
         checkSelectedGenders: (state, { payload }) => {
             state.selectedGenders = []
@@ -121,7 +178,7 @@ export const clothesSlice = createSlice({
                 }
                 return item
             })
-            state.isSelectedBrandsEmpty = false
+            state.isSelectedGendersEmpty = false
 
             state.selectedGenders = [...new Set(state.selectedGenders)]
         },
@@ -146,13 +203,6 @@ export const clothesSlice = createSlice({
         },
         setFilteredProducts: (state, { payload }) => {
             state.productsPageClothes = state.data.filter(item => item.category === payload)
-        },
-        resetSelectedGenders: (state) => {
-            state.selectedGenders = []
-            // state.isSelectedBrandsEmpty = true
-        },
-        resetSelectedBrands: (state) => {
-            state.selectedBrands = []
         },
 
         // ================
@@ -252,210 +302,6 @@ export const clothesSlice = createSlice({
                 })
             }
         },
-        filterPrice: (state, { payload }) => {
-            state.priceFilterObj = { ...state.priceFilterObj, ...payload }
-            // { "50$-150$":true , "0$-50$":false }
-            for (let key in state.priceFilterObj) {
-                if (state.priceFilterObj[key] === true) {
-                    state.filterPriceCombiner.push(key)
-                } else {
-                    state.filterPriceCombiner.splice(state.filterPriceCombiner.indexOf(key), 1)
-                }
-            }
-            state.filterPriceCombiner = [...new Set(state.filterPriceCombiner)]
-        },
-        filterBrand: (state, { payload }) => {
-            state.brandFilterObj = { ...state.brandFilterObj, ...payload }
-            // { mavi:true, bershka:false }
-            for (let key in state.brandFilterObj) {
-                if (state.brandFilterObj[key] === true) {
-                    state.filterBrandCombiner.push(key)
-                } else {
-                    state.filterBrandCombiner.splice(state.filterBrandCombiner.indexOf(key), 1)
-                }
-            }
-            state.filterBrandCombiner = [...new Set(state.filterBrandCombiner)]
-        },
-        filterGender: (state, { payload }) => {
-            state.genderFilterObj = { ...state.genderFilterObj, ...payload }
-            // { male:true, female:true, child:false }
-            for (let key in state.genderFilterObj) {
-                if (state.genderFilterObj[key] === true) {
-                    state.filterGenderCombiner.push(key)
-                } else {
-                    state.filterGenderCombiner.splice(state.filterGenderCombiner.indexOf(key), 1)
-                }
-            }
-            state.filterGenderCombiner = [...new Set(state.filterGenderCombiner)]
-        },
-        renderFilter: (state) => {
-            // filterCombiner = ["female","male"]
-            // if no filterItem checked
-            if (state.filterBrandCombiner.length === 0 &&
-                state.filterGenderCombiner.length === 0 &&
-                state.filterPriceCombiner.length === 0
-            ) {
-                state.productsPageClothes = state.data.filter(item => item.category === state.categoryName)
-                // filterlerin hamsini silinnen sonra yeniden her hansisa filteri secende butun filterlerin icini resetleyirik
-                state.filterGenderCombiner = []
-                state.filterBrandCombiner = []
-                state.filterPriceCombiner = []
-                state.filterItemIdBox = []
-                state.genderFilterObj = {}
-                state.brandFilterObj = {}
-                state.priceFilterObj = {}
-                return
-            }
-
-
-            state.data.map(item => {
-                if (state.filterGenderCombiner.length > 0 &&
-                    state.filterBrandCombiner.length > 0 &&
-                    state.filterPriceCombiner.length > 0) {
-                    if (state.filterGenderCombiner.includes(item.gender) &&
-                        state.filterBrandCombiner.includes(item.brand)) {
-                        if (state.filterPriceCombiner.includes("0$-50$")) {
-                            if (item.price > 0 && item.price <= 50) {
-                                state.filterItemIdBox.push(item.id)
-                            }
-                        }
-                        if (state.filterPriceCombiner.includes("50$-150$")) {
-                            if (item.price > 50 && item.price <= 150) {
-                                state.filterItemIdBox.push(item.id)
-                            }
-                        }
-                        if (state.filterPriceCombiner.includes("150$-350$")) {
-                            if (item.price > 150 && item.price <= 350) {
-                                state.filterItemIdBox.push(item.id)
-                            }
-                        }
-                        if (state.filterPriceCombiner.includes("350$-2250$")) {
-                            if (item.price > 350 && item.price <= 2250) {
-                                state.filterItemIdBox.push(item.id)
-                            }
-                        }
-                    }
-                }
-                if (state.filterGenderCombiner.length > 0 &&
-                    state.filterBrandCombiner.length === 0 &&
-                    state.filterPriceCombiner.length === 0) {
-                    if (state.filterGenderCombiner.includes(item.gender)) {
-                        state.filterItemIdBox.push(item.id)
-                    }
-                }
-
-                if (state.filterGenderCombiner.length === 0 &&
-                    state.filterBrandCombiner.length > 0 &&
-                    state.filterPriceCombiner.length === 0) {
-                    if (state.filterBrandCombiner.includes(item.brand)) {
-                        state.filterItemIdBox.push(item.id)
-                    }
-                }
-
-                if (state.filterGenderCombiner.length === 0 &&
-                    state.filterBrandCombiner.length === 0 &&
-                    state.filterPriceCombiner.length > 0) {
-                    if (state.filterPriceCombiner.includes("0$-50$")) {
-                        if (item.price > 0 && item.price <= 50) {
-                            state.filterItemIdBox.push(item.id)
-                        }
-                    }
-                    if (state.filterPriceCombiner.includes("50$-150$")) {
-                        if (item.price > 50 && item.price <= 150) {
-                            state.filterItemIdBox.push(item.id)
-                        }
-                    }
-                    if (state.filterPriceCombiner.includes("150$-350$")) {
-                        if (item.price > 150 && item.price <= 350) {
-                            state.filterItemIdBox.push(item.id)
-                        }
-                    }
-                    if (state.filterPriceCombiner.includes("350$-2250$")) {
-                        if (item.price > 350 && item.price <= 2250) {
-                            state.filterItemIdBox.push(item.id)
-                        }
-                    }
-                }
-
-                if (state.filterGenderCombiner.length > 0 &&
-                    state.filterBrandCombiner.length > 0 &&
-                    state.filterPriceCombiner.length === 0) {
-                    if (state.filterGenderCombiner.includes(item.gender) &&
-                        state.filterBrandCombiner.includes(item.brand)) {
-                        state.filterItemIdBox.push(item.id)
-                    }
-                }
-
-                if (state.filterGenderCombiner.length === 0 &&
-                    state.filterBrandCombiner.length > 0 &&
-                    state.filterPriceCombiner.length > 0) {
-                    if (state.filterBrandCombiner.includes(item.brand)) {
-                        // console.log('isleyir');
-                        if (state.filterPriceCombiner.includes("0$-50$")) {
-                            if (item.price > 0 && item.price <= 50) {
-                                state.filterItemIdBox.push(item.id)
-                            }
-                        }
-                        if (state.filterPriceCombiner.includes("50$-150$")) {
-                            if (item.price > 50 && item.price <= 150) {
-                                state.filterItemIdBox.push(item.id)
-                            }
-                        }
-                        if (state.filterPriceCombiner.includes("150$-350$")) {
-                            if (item.price > 150 && item.price <= 350) {
-                                state.filterItemIdBox.push(item.id)
-                            }
-                        }
-                        if (state.filterPriceCombiner.includes("350$-2250$")) {
-                            if (item.price > 350 && item.price <= 2250) {
-                                state.filterItemIdBox.push(item.id)
-                            }
-                        }
-                    }
-                }
-                if (state.filterGenderCombiner.length > 0 &&
-                    state.filterBrandCombiner.length === 0 &&
-                    state.filterPriceCombiner.length > 0) {
-                    if (state.filterGenderCombiner.includes(item.gender)) {
-                        if (state.filterPriceCombiner.includes("0$-50$")) {
-                            if (item.price > 0 && item.price <= 50) {
-                                state.filterItemIdBox.push(item.id)
-                            }
-                        }
-                        if (state.filterPriceCombiner.includes("50$-150$")) {
-                            if (item.price > 50 && item.price <= 150) {
-                                state.filterItemIdBox.push(item.id)
-                            }
-                        }
-                        if (state.filterPriceCombiner.includes("150$-350$")) {
-                            if (item.price > 150 && item.price <= 350) {
-                                state.filterItemIdBox.push(item.id)
-                            }
-                        }
-                        if (state.filterPriceCombiner.includes("350$-2250$")) {
-                            if (item.price > 350 && item.price <= 2250) {
-                                state.filterItemIdBox.push(item.id)
-                            }
-                        }
-                    }
-                }
-                return item
-            });
-
-            // state.filterItemIdBox = [...new Set(state.filterItemIdBox)]
-
-            // deyeri sifirlayiriq ve yeniden yaziriq
-            state.productsPageClothes = []
-
-            // for dongusu ancaq sonuncu deyeri qaytarmasin deye ...state.productsPageClothes bele yaziriq
-            for (let filterId of state.filterItemIdBox) {
-                state.productsPageClothes = [
-                    ...state.productsPageClothes,
-                    ...state.data.filter(item => item.id === filterId && item.category === state.categoryName)
-                ]
-            }
-            state.filterItemIdBox = []
-        }
     },
     extraReducers: {
         [fetchClothesData.pending]: (state) => {
@@ -463,13 +309,11 @@ export const clothesSlice = createSlice({
             state.error = false
         },
         [fetchClothesData.fulfilled]: (state, { payload }) => {
-            console.log('fulfilled');
             state.pending = false
             state.data = payload
-
         },
         [fetchClothesData.rejected]: (state, action) => {
-            console.log('rejected');
+            console.log(action.error.message);
             state.error = action.error.message
             state.pending = false
         },
@@ -480,26 +324,22 @@ export const clothesSlice = createSlice({
             state.productsPageClothes = [] // skeleton gorsensin deye her category seciminde 
         },
         [fetchFilteredProducts.fulfilled]: (state, { payload }) => {
-            console.log('fetchFilteredProducts fullfilled');
             state.productsPageClothes = payload
         },
         [fetchBrands.fulfilled]: (state, { payload }) => {
-            console.log('brands fullfilled');
             state.brandsData = payload
         },
         [fetchGenders.fulfilled]: (state, { payload }) => {
-            console.log('genders fullfilled');
             state.gendersData = payload
         },
-        [fetchGenders.rejected]: (state, { payload }) => {
-            console.log(state);
-            
+        [fetchPrices.fulfilled]: (state, { payload }) => {
+            state.pricesData = payload
         },
     }
 })
 
 
-export const { resetFilterBar, renderFilter, filterBrand, filterPrice, filterGender, showMoreClothesItems, showLessClothesItems, setFavoriteInFavBoxToTrue, removeFromBasket, addToBasket, increaseProductItemCount, decreaseProductItemCount, setProductItemSize, showBar, hideBar, setFilteredProducts, setCategoryName, setProductItem, addToFavBox, removeFromFavBox, changeIsFav, setProductItemColor, selectBrands, checkSelectedBrands, resetSelectedGenders, resetSelectedBrands, selectGenders, checkSelectedGenders } = clothesSlice.actions
+export const { resetFilterBar, renderFilter, filterGender, showMoreClothesItems, showLessClothesItems, setFavoriteInFavBoxToTrue, removeFromBasket, addToBasket, increaseProductItemCount, decreaseProductItemCount, setProductItemSize, showBar, hideBar, setFilteredProducts, setCategoryName, setProductItem, addToFavBox, removeFromFavBox, changeIsFav, setProductItemColor, selectBrands, checkSelectedBrands, resetSelectedGenders, resetSelectedBrands, selectGenders, checkSelectedGenders, checkSelectedPrices, selectPrices } = clothesSlice.actions
 
 export default clothesSlice.reducer
 

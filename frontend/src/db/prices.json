@@ -1,0 +1,22 @@
+[
+    {
+        "minPrice": "0",
+        "maxPrice": "50",
+        "selected": "false"
+    },
+    {
+        "minPrice": "50",
+        "maxPrice": "150",
+        "selected": "false"
+    },
+    {
+        "minPrice": "150",
+        "maxPrice": "350",
+        "selected": "false"
+    },
+    {
+        "minPrice": "350",
+        "maxPrice": "2250",
+        "selected": "false"
+    }
+]
