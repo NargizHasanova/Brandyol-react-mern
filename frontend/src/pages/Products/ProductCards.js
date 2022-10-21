@@ -1,14 +1,13 @@
 import React from 'react'
 import { useNavigate } from 'react-router';
-import WaitingGif from '../../components/WaitingGif'
 import { FaHeart } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
-import { changeIsFav, removeFromFavBox, addToFavBox, setProductItem } from '../../redux/clothesSlice'
+import { changeIsFav, removeFromFavBox, addToFavBox } from '../../redux/clothesSlice'
 import CardSkeleton from './ProductSkeleton';
 
 export default function ProductCards() {
     const dispatch = useDispatch()
-    const { productsPageClothes, pending, filterBarVisible } = useSelector(state => state.clothes)
+    const { productsPageClothes, filterBarVisible } = useSelector(state => state.clothes)
 
     const navigate = useNavigate();
 

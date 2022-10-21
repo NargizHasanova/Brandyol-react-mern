@@ -37,39 +37,50 @@ export const fetchPrices = createAsyncThunk("prices/fetchPrices",
 )
 
 export const fetchFilteredProducts = createAsyncThunk("search/fetchFilteredProducts",
-    async ({ category: cat, brand, gender, price }) => {
+    async ({ category: cat, brand, gender, minPrice, maxPrice }) => {
         const isBrand = typeof brand === "string"
         const isGender = typeof gender === "string"
-        const isPrice = typeof price === "number"
-        if (isBrand && isGender && isPrice) {
+        const isMinPrice = typeof minPrice === "string"
+        console.log({isGender})
+        console.log({isBrand})
+        console.log({isMinPrice})
+
+        if (isBrand && isGender && isMinPrice) {
             console.log('isBrand and isGender and isPrice');
-            const { data } = await Axios.get(`/search/?cat=${cat}&brand=${brand}&gender=${gender}&price=${price}`)
+            const { data } = await Axios.get(`/search/?cat=${cat}&brand=${brand}&gender=${gender}&minPrice=${minPrice}&maxPrice=${maxPrice}`)
             return data
-        } else if (isBrand && isGender) {
+        }
+        else if (isBrand && isGender && !isMinPrice) {
             console.log('isBrand and isGender');
             const { data } = await Axios.get(`/search/?cat=${cat}&brand=${brand}&gender=${gender}`)
             return data
-        } else if (isBrand && isPrice) {
-            console.log('isBrand and isGender');
-            const { data } = await Axios.get(`/search/?cat=${cat}&brand=${brand}&price=${price}`)
+        }
+        else if (isBrand && isMinPrice && !isGender) {
+            console.log('isBrand and isPrice');
+            const { data } = await Axios.get(`/search/?cat=${cat}&brand=${brand}&minPrice=${minPrice}&maxPrice=${maxPrice}`)
             return data
-        } else if (isGender && isPrice) {
-            console.log('isBrand and isGender');
-            const { data } = await Axios.get(`/search/?cat=${cat}&price=${price}&gender=${gender}`)
+        }
+        else if (isGender && isMinPrice && !isBrand) {
+            console.log('isPrice and isGender');
+            const { data } = await Axios.get(`/search/?cat=${cat}&gender=${gender}&minPrice=${minPrice}&maxPrice=${maxPrice}`)
             return data
-        } else if (isBrand) {
+        }
+        else if (isBrand && !isGender && !isMinPrice) {
             console.log('isBrand');
             const { data } = await Axios.get(`/search/?cat=${cat}&brand=${brand}`)
             return data
-        } else if (isGender) {
+        }
+        else if (isGender && !isBrand && !isMinPrice) {
             console.log('isGender');
             const { data } = await Axios.get(`/search/?cat=${cat}&gender=${gender}`)
             return data
-        } else if (isPrice) {
+        }
+        else if (isMinPrice && !isBrand && !isGender) {
             console.log('isPrice');
-            const { data } = await Axios.get(`/search/?cat=${cat}&price=${price}`)
+            const { data } = await Axios.get(`/search/?cat=${cat}&minPrice=${minPrice}&maxPrice=${maxPrice}`)
             return data
-        } else {
+        }
+        else {
             console.log('fetchFilteredProducts else');
             const { data } = await Axios.get(`/search/?cat=${cat}`)
             return data
@@ -92,22 +103,14 @@ export const clothesSlice = createSlice({
         // Selected Filters 
         selectedBrands: [],
         selectedGenders: [],
-        selectedPrices: [],
+        selectedPrices: {},
         // not Selected Filters
         isSelectedBrandsEmpty: true,
         isSelectedGendersEmpty: true,
         isSelectedPricesEmpty: true,
         // ==================
         basket: [],
-        filterGenderCombiner: [],
-        filterBrandCombiner: [],
-        filterPriceCombiner: [],
-        filterItemIdBox: [],
         loading: true,
-        productItem: {},
-        genderFilterObj: {},
-        priceFilterObj: {},
-        brandFilterObj: {},
         favorite: false,
         numOfItem: 10,
         filterBarIsVisible: false,
@@ -142,7 +145,7 @@ export const clothesSlice = createSlice({
             })
         },
         checkSelectedPrices: (state, { payload }) => {
-            state.selectedPrices = []
+            state.selectedPrices = {}
             let priceIsEmpty = state.pricesData.every(item => item.selected === false)
 
             if (priceIsEmpty) {
@@ -152,16 +155,13 @@ export const clothesSlice = createSlice({
 
             state.pricesData.map(item => {
                 if (item.selected === true) {
-                    state.selectedPrices.push({
-                        minPrice: item.minPrice,
-                        maxPrice: item.maxPrice
-                    })
+                    state.selectedPrices.minPrice = item.minPrice
+                    state.selectedPrices.maxPrice = item.maxPrice
                 }
                 return item
             })
             state.isSelectedPricesEmpty = false
 
-            state.selectedPrices = [...new Set(state.selectedPrices)]
         },
         checkSelectedGenders: (state, { payload }) => {
             state.selectedGenders = []
@@ -201,23 +201,8 @@ export const clothesSlice = createSlice({
 
             state.selectedBrands = [...new Set(state.selectedBrands)]
         },
-        setFilteredProducts: (state, { payload }) => {
-            state.productsPageClothes = state.data.filter(item => item.category === payload)
-        },
 
         // ================
-        resetFilterBar: (state) => {
-            state.filterGenderCombiner = []
-            state.filterBrandCombiner = []
-            state.filterPriceCombiner = []
-            state.filterItemIdBox = []
-            state.genderFilterObj = {}
-            state.brandFilterObj = {}
-            state.priceFilterObj = {}
-        },
-        setProductItem: (state, { payload } = state.productItem) => {
-            state.productItem = payload
-        },
         showMoreClothesItems: (state) => {
             state.numOfItem = state.numOfItem + 10
         },
@@ -339,7 +324,7 @@ export const clothesSlice = createSlice({
 })
 
 
-export const { resetFilterBar, renderFilter, filterGender, showMoreClothesItems, showLessClothesItems, setFavoriteInFavBoxToTrue, removeFromBasket, addToBasket, increaseProductItemCount, decreaseProductItemCount, setProductItemSize, showBar, hideBar, setFilteredProducts, setCategoryName, setProductItem, addToFavBox, removeFromFavBox, changeIsFav, setProductItemColor, selectBrands, checkSelectedBrands, resetSelectedGenders, resetSelectedBrands, selectGenders, checkSelectedGenders, checkSelectedPrices, selectPrices } = clothesSlice.actions
+export const { showMoreClothesItems, showLessClothesItems, setFavoriteInFavBoxToTrue, removeFromBasket, addToBasket, increaseProductItemCount, decreaseProductItemCount, setProductItemSize, showBar, hideBar, addToFavBox, removeFromFavBox, changeIsFav, setProductItemColor, selectBrands, checkSelectedBrands, resetSelectedGenders, resetSelectedBrands, selectGenders, checkSelectedGenders, checkSelectedPrices, selectPrices } = clothesSlice.actions
 
 export default clothesSlice.reducer
 

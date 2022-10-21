@@ -22,9 +22,6 @@ export default function HeaderBtm() {
    const navigate = useNavigate();
 
    function selectCategory(category) {
-      // dispatch(setFilteredProducts(category))
-      // dispatch(setCategoryName(category))
-      // dispatch(resetFilterBar())
       dispatch(fetchFilteredProducts({ category: category }))
       navigate(`/search/?cat=${category}`)
    }

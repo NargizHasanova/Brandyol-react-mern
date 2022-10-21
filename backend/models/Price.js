@@ -2,8 +2,11 @@ import mongoose from 'mongoose';
 
 const PriceSchema = new mongoose.Schema(
     {
-        price: {
-            type: Number,
+        minPrice: {
+            type: String,
+        },
+        maxPrice: {
+            type: String,
         },
         selected: {
             type: Boolean,

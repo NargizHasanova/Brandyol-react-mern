@@ -81,19 +81,63 @@ export const searchByQueryType = async (req, res) => {
 
         let filterRes
         if (brand && gender && minPrice) {
-            filterRes = await ProductModel.find({ category: category, brand: brand, gender: gender, price: price })
+            filterRes = await ProductModel.find(
+                {
+                    category: category,
+                    brand: brand,
+                    gender: gender,
+                    price: { $gt: minPrice, $lt: maxPrice }
+                }
+            )
         }
-        else if (brand && gender) {
-            filterRes = await ProductModel.find({ category: category, brand: brand, gender: gender })
+        else if (brand && gender && !minPrice) {
+            filterRes = await ProductModel.find(
+                {
+                    category: category,
+                    brand: brand,
+                    gender: gender
+                })
         }
-        else if (brand) {
-            filterRes = await ProductModel.find({ category: category, brand: brand })
+        else if (brand && minPrice && !gender) {
+            filterRes = await ProductModel.find(
+                {
+                    category: category,
+                    brand: brand,
+                    price: { $gt: minPrice, $lt: maxPrice }
+                })
         }
-        else if (gender) {
-            filterRes = await ProductModel.find({ category: category, gender: gender })
+        else if (gender && minPrice && !brand) {
+            filterRes = await ProductModel.find(
+                {
+                    category: category,
+                    gender: gender,
+                    price: { $gt: minPrice, $lt: maxPrice }
+                }
+            )
         }
-        else if (minPrice) {
-            filterRes = await ProductModel.find({ category: category, price: { $gt: minPrice, $lt: maxPrice } })
+        else if (brand && !gender && !minPrice) {
+            filterRes = await ProductModel.find(
+                {
+                    category: category,
+                    brand: brand
+                }
+            )
+        }
+        else if (gender && !brand && !minPrice) {
+            filterRes = await ProductModel.find(
+                {
+                    category: category,
+                    gender: gender
+                }
+            )
+        }
+        else if (minPrice && !gender && !brand) {
+            filterRes = await ProductModel.find(
+                {
+                    category: category,
+                    price: { $gt: minPrice, $lt: maxPrice }
+                }
+            )
         }
         else {
             filterRes = await ProductModel.find({ category: category })
