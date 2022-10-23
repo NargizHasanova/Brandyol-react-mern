@@ -33,6 +33,7 @@ export default function Brand({ filterClothesByBrand }) {
                                     key={item._id}
                                     control={
                                         <Checkbox
+                                            checked={item.selected}
                                             onChange={() => filterClothesByBrand(item.brand)}
                                         />
                                     }
@@ -42,22 +43,6 @@ export default function Brand({ filterClothesByBrand }) {
                         }
                     })}
                 </FormGroup>
-                {/* {brandsData.map((item) => {
-                    if (item.brand.toLowerCase().includes(brandValue.toLowerCase())) {
-                        return (
-                            <div key={item._id} className="brand-option">
-                                <input
-                                    name="brand"
-                                    className='chkbox'
-                                    type="checkbox"
-                                    value={item.brand}
-                                    onChange={() => filterClothesByBrand(item.brand)}
-                                />
-                                <span>{item.brand}</span>
-                            </div>
-                        )
-                    }
-                })} */}
             </div>
         </>
     )

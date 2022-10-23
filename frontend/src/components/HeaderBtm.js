@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router';
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useDispatch, useSelector } from 'react-redux';
-import { resetFilterBar, setFilteredProducts, setCategoryName, fetchCategories, fetchFilteredProducts } from '../redux/clothesSlice';
+import { resetFilterBar, setFilteredProducts, setCategoryName, fetchCategories, fetchFilteredProducts, resetFilters } from '../redux/clothesSlice';
 
 // Import Swiper styles
 import "swiper/css";
@@ -17,12 +17,13 @@ import { useEffect, useState } from 'react';
 SwiperCore.use([Pagination, Navigation]);
 
 export default function HeaderBtm() {
-   const { categoriesData: categories, productsPageClothes } = useSelector(state => state.clothes)
+   const { categoriesData: categories } = useSelector(state => state.clothes)
    const dispatch = useDispatch()
    const navigate = useNavigate();
 
    function selectCategory(category) {
       dispatch(fetchFilteredProducts({ category: category }))
+      dispatch(resetFilters())
       navigate(`/search/?cat=${category}`)
    }
 

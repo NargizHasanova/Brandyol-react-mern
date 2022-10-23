@@ -3,7 +3,7 @@ import CategoryModel from '../models/Category.js'
 import BrandModel from '../models/Brand.js'
 import GenderModel from '../models/Gender.js'
 import PriceModel from '../models/Price.js'
-import HotSaleModel from '../models/Hotsale.js'
+import HotsalesModel from '../models/Hotsales.js'
 
 //GET ALL PRODUCTS
 export const getAllProducts = async (req, res) => {
@@ -72,7 +72,8 @@ export const getAllPrices = async (req, res) => {
 // GET ALL HOTSALES
 export const getAllHotSales = async (req, res) => {
     try {
-        let hotSales = await HotSaleModel.find()
+        let hotSales = await HotsalesModel.find()
+        console.log(hotSales);
         return res.json(hotSales)
     } catch (err) {
         return res.status(500).json({

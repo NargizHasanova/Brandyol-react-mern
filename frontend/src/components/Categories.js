@@ -6,7 +6,7 @@ import "swiper/css/pagination"
 import SwiperCore, { Pagination, Autoplay } from 'swiper';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { fetchFilteredProducts } from '../redux/clothesSlice';
+import { fetchFilteredProducts, resetFilters } from '../redux/clothesSlice';
 
 // install Swiper modules
 SwiperCore.use([Pagination, Autoplay]);
@@ -18,6 +18,7 @@ export default function Categories() {
 
   function shopNow(category) {
     dispatch(fetchFilteredProducts({ category: category }))
+    dispatch(resetFilters())
     navigate(`/search/?cat=${category}`)
   }
 

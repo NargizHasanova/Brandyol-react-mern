@@ -73,7 +73,6 @@ export default function Products() {
     dispatch(fetchPrices())
   }, [])
 
-
   useEffect(() => {
     if (
       !isSelectedBrandsEmpty &&
@@ -262,6 +261,7 @@ export default function Products() {
                     key={item._id}
                     control={
                       <Checkbox
+                        checked={item.selected}
                         onChange={() => filterClothesByGender(item.gender)}
                       />
                     }
@@ -315,6 +315,7 @@ export default function Products() {
                       value={item.minPrice}
                       control={
                         <Radio
+                          checked={item.selected}
                           onChange={() => filterClothesByPrice(item.minPrice)}
                         />
                       }

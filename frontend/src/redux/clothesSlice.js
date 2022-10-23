@@ -38,9 +38,7 @@ export const fetchPrices = createAsyncThunk("prices/fetchPrices",
 
 export const fetchHotSales = createAsyncThunk("sales/fetchHotSales",
     async () => {
-        console.log('fetchHotSales');
-        const  data  = await Axios.get(`/hotSales`)
-        console.log(data);
+        const { data } = await Axios.get(`/hotSales`)
         return data
     }
 )
@@ -50,9 +48,6 @@ export const fetchFilteredProducts = createAsyncThunk("search/fetchFilteredProdu
         const isBrand = typeof brand === "string"
         const isGender = typeof gender === "string"
         const isMinPrice = typeof minPrice === "string"
-        console.log({ isGender })
-        console.log({ isBrand })
-        console.log({ isMinPrice })
 
         if (isBrand && isGender && isMinPrice) {
             console.log('isBrand and isGender and isPrice');
@@ -211,6 +206,27 @@ export const clothesSlice = createSlice({
 
             state.selectedBrands = [...new Set(state.selectedBrands)]
         },
+        // reset all filters
+        resetFilters: (state) => {
+            state.selectedBrands = []
+            state.selectedGenders = []
+            state.selectedPrices = {}
+            state.isSelectedBrandsEmpty = true
+            state.isSelectedGendersEmpty = true
+            state.isSelectedPricesEmpty = true
+            state.brandsData = state.brandsData.map(item => {
+                item.selected = false
+                return item
+            })
+            state.gendersData = state.gendersData.map(item => {
+                item.selected = false
+                return item
+            })
+            state.pricesData = state.pricesData.map(item => {
+                item.selected = false
+                return item
+            })
+        },
 
         // ================
         showMoreClothesItems: (state) => {
@@ -333,14 +349,11 @@ export const clothesSlice = createSlice({
         [fetchHotSales.fulfilled]: (state, { payload }) => {
             state.hotSalesData = payload
         },
-        [fetchHotSales.rejected]: (state, action) => {
-            console.log(action.error.message);
-        },
     }
 })
 
 
-export const { showMoreClothesItems, showLessClothesItems, setFavoriteInFavBoxToTrue, removeFromBasket, addToBasket, increaseProductItemCount, decreaseProductItemCount, setProductItemSize, showBar, hideBar, addToFavBox, removeFromFavBox, changeIsFav, setProductItemColor, selectBrands, checkSelectedBrands, resetSelectedGenders, resetSelectedBrands, selectGenders, checkSelectedGenders, checkSelectedPrices, selectPrices } = clothesSlice.actions
+export const { showMoreClothesItems, showLessClothesItems, setFavoriteInFavBoxToTrue, removeFromBasket, addToBasket, increaseProductItemCount, decreaseProductItemCount, setProductItemSize, showBar, hideBar, addToFavBox, removeFromFavBox, changeIsFav, setProductItemColor, selectBrands, checkSelectedBrands, resetSelectedGenders, resetSelectedBrands, selectGenders, checkSelectedGenders, checkSelectedPrices, selectPrices, resetFilters } = clothesSlice.actions
 
 export default clothesSlice.reducer
 

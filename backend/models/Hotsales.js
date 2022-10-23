@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const HotSaleSchema = new mongoose.Schema(
+const HotsalesSchema = new mongoose.Schema(
     {
         category: {
             type: String,
@@ -19,4 +19,4 @@ const HotSaleSchema = new mongoose.Schema(
     }
 );
 
-export default mongoose.model('Hotsale', HotSaleSchema);
+export default mongoose.model('Hotsales', HotsalesSchema);
