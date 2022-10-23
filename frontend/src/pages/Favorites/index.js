@@ -11,15 +11,15 @@ export default function Favorites() {
     console.log(favoriteBox);
 
     function itemInfo(item) {
-        console.log(item);
-        dispatch(setCategoryName(item.category))
-        dispatch(setProductItem(item))
-        navigate(`/product_item/${item.id}`)
+        // console.log(item);
+        // dispatch(setCategoryName(item.category))
+        // dispatch(setProductItem(item))
+        // navigate(`/product_item/${item.id}`)
     }
 
     function removeFromFavorites(id) {
-        dispatch(changeIsFav(id))
-        dispatch(removeFromFavBox(id))
+        // dispatch(changeIsFav(id))
+        // dispatch(removeFromFavBox(id))
     }
 
     return (

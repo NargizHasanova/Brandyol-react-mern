@@ -1,0 +1,27 @@
+[
+    {
+      "category": "Sports wear",
+      "desc": "SPORT BEST",
+      "img": "https://i.insider.com/620a868cfc23d1001804c8cb?width=1000&format=jpeg&auto=webp"
+    },
+    {
+      "category": "T-Shirt",
+      "desc": "Exclusive T-Shirts!",
+      "img": "https://lzd-img-global.slatic.net/g/p/06479d4d0fd5f9a2f192deb8680cc871.jpg_720x720q80.jpg_.webp"
+    },
+    {
+      "category": "Sweater",
+      "desc": "SWEATER COLLECTION",
+      "img": "https://target.scene7.com/is/image/Target/GUEST_3dbf09e9-b3ac-425d-bd52-2c8fd2f3519f"
+    },
+    {
+      "category": "Jacket",
+      "desc": "LIGHT JACKETS",
+      "img": "https://ae01.alicdn.com/kf/Ha174f7bf11f3418ab9b7dedf08b5e9e3p/Spring-And-Autumn-Jeans-Coat-Men-s-Korean-style-Fashion-Students-Handsome-Versatile-Jacket-MEN-S.jpg"
+    },
+    {
+      "category": "Jeans",
+      "desc": "JEANS COLLECTION",
+      "img": "https://www.levis.com.au/on/demandware.static/-/Sites-LeviAU-Library/default/dwf3301c53/images/homepage/CategoryTiles/H222HomepageCatTile-WomensClothing-JulyV2.png"
+    }
+]

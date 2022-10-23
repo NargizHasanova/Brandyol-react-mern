@@ -167,20 +167,20 @@ export default function ProductItem({
     }
 
     function addToFavorites() {
-        dispatch(changeIsFav(productItem._id))
-        dispatch(addToFavBox(productItem))
+        // dispatch(changeIsFav(productItem._id))
+        // dispatch(addToFavBox(productItem))
     }
 
     function removeFromFavorites() {
-        dispatch(changeIsFav(productItem._id))
-        dispatch(removeFromFavBox(productItem._id))
+        // dispatch(changeIsFav(productItem._id))
+        // dispatch(removeFromFavBox(productItem._id))
     }
 
     function selectCategory() {
-        dispatch(setFilteredProducts(productItem.category))
-        dispatch(setCategoryName(productItem.category))
-        dispatch(resetFilterBar())
-        navigate("/products")
+        // dispatch(setFilteredProducts(productItem.category))
+        // dispatch(setCategoryName(productItem.category))
+        // dispatch(resetFilterBar())
+        // navigate("/products")
     }
 
     return (

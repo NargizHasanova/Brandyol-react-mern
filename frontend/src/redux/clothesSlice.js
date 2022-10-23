@@ -36,14 +36,23 @@ export const fetchPrices = createAsyncThunk("prices/fetchPrices",
     }
 )
 
+export const fetchHotSales = createAsyncThunk("sales/fetchHotSales",
+    async () => {
+        console.log('fetchHotSales');
+        const  data  = await Axios.get(`/hotSales`)
+        console.log(data);
+        return data
+    }
+)
+
 export const fetchFilteredProducts = createAsyncThunk("search/fetchFilteredProducts",
     async ({ category: cat, brand, gender, minPrice, maxPrice }) => {
         const isBrand = typeof brand === "string"
         const isGender = typeof gender === "string"
         const isMinPrice = typeof minPrice === "string"
-        console.log({isGender})
-        console.log({isBrand})
-        console.log({isMinPrice})
+        console.log({ isGender })
+        console.log({ isBrand })
+        console.log({ isMinPrice })
 
         if (isBrand && isGender && isMinPrice) {
             console.log('isBrand and isGender and isPrice');
@@ -94,6 +103,7 @@ export const clothesSlice = createSlice({
         data: [],
         categoriesData: [],
         favoriteBox: [],
+        hotSalesData: [],
         // products list page after clicking on category(ex:t-shirt)(headerBtm comp.)
         productsPageClothes: [],
         // Filters Data
@@ -319,6 +329,12 @@ export const clothesSlice = createSlice({
         },
         [fetchPrices.fulfilled]: (state, { payload }) => {
             state.pricesData = payload
+        },
+        [fetchHotSales.fulfilled]: (state, { payload }) => {
+            state.hotSalesData = payload
+        },
+        [fetchHotSales.rejected]: (state, action) => {
+            console.log(action.error.message);
         },
     }
 })

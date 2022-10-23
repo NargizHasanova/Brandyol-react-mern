@@ -10,7 +10,7 @@ import "swiper/css/pagination"
 import "swiper/css/navigation"
 
 // import Swiper core and required modules
-import SwiperCore, { Pagination, Navigation, Autoplay } from 'swiper';
+import SwiperCore, { Pagination, Navigation } from 'swiper';
 import { useEffect, useState } from 'react';
 
 // install Swiper modules
@@ -25,10 +25,6 @@ export default function HeaderBtm() {
       dispatch(fetchFilteredProducts({ category: category }))
       navigate(`/search/?cat=${category}`)
    }
-
-   useEffect(() => {
-      dispatch(fetchCategories())
-   }, []);
 
    return (
       <section className='headerBtm container'>

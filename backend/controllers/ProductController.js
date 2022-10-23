@@ -3,6 +3,7 @@ import CategoryModel from '../models/Category.js'
 import BrandModel from '../models/Brand.js'
 import GenderModel from '../models/Gender.js'
 import PriceModel from '../models/Price.js'
+import HotSaleModel from '../models/Hotsale.js'
 
 //GET ALL PRODUCTS
 export const getAllProducts = async (req, res) => {
@@ -64,6 +65,18 @@ export const getAllPrices = async (req, res) => {
     } catch (err) {
         return res.status(500).json({
             message: 'could not get prices',
+            error: err.message,
+        })
+    }
+}
+// GET ALL HOTSALES
+export const getAllHotSales = async (req, res) => {
+    try {
+        let hotSales = await HotSaleModel.find()
+        return res.json(hotSales)
+    } catch (err) {
+        return res.status(500).json({
+            message: 'could not get hotSales',
             error: err.message,
         })
     }
