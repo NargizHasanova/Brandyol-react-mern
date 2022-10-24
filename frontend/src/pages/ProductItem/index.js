@@ -10,7 +10,7 @@ import 'antd/dist/antd.css';
 import sizeChart from '../../assets/images/size-chart.jpg'
 import { useMediaQuery } from 'react-responsive'
 import { useSelector, useDispatch } from 'react-redux';
-import { setProductItemSize, setProductItemColor, addToFavBox, changeIsFav, removeFromFavBox, increaseProductItemCount, decreaseProductItemCount, setFilteredProducts, setCategoryName, resetFilterBar, setProductItem } from '../../redux/clothesSlice';
+import { setProductItemSize, setProductItemColor, increaseProductItemCount, decreaseProductItemCount, setSingleProduct } from '../../redux/clothesSlice';
 
 // Import Swiper styles
 import "swiper/css";
@@ -39,17 +39,14 @@ export default function ProductItem({
     zoomLevel = 1.7
 }) {
     const dispatch = useDispatch()
-    const clothes = useSelector(state => state.clothes)
-    const [productItem, setProductItem] = useState(null);
+    const { singleProduct } = useSelector(state => state.clothes)
     const { id: productId } = useParams()
 
     useEffect(() => {
         if (productId) {
             Axios.get(`/products/${productId}`)
-                .then(({ data }) => {
-                    console.log(data);
-                    setProductItem(data)
-                }).catch(err => console.log(err))
+                .then(({ data }) => dispatch(setSingleProduct(data)))
+                .catch(err => console.log(err))
         }
     }, []);
 
@@ -82,7 +79,7 @@ export default function ProductItem({
         dispatch(decreaseProductItemCount())
     }
 
-    function selectWhite() {
+    function selectColor() {
         dispatch(setProductItemColor("#fff"))
         setColorWhite(prev => !prev)
         setColorBlue(false)
@@ -184,11 +181,11 @@ export default function ProductItem({
     }
 
     return (
-        productItem && <>
+        singleProduct && <>
             <div className="path container">
                 <Link to="/" className="path-home" href="index.html">Home</Link>
                 <i className="fas fa-angle-double-right"></i>
-                <span onClick={selectCategory} className="path-home" href="index.html">{productItem.category}</span>
+                <span onClick={selectCategory} className="path-home" href="index.html">{singleProduct.category}</span>
                 <i className="fas fa-angle-double-right"></i>
                 <span className="path-productItem" href="products.html">Product</span>
             </div>
@@ -202,7 +199,7 @@ export default function ProductItem({
                         thumbs={{ swiper: thumbsSwiper }}
                         className="mySwiper2">
                         <SwiperSlide>
-                            {mediaMax1024 ? <img src={productItem.images[0]} />
+                            {mediaMax1024 ? <img src={singleProduct.images[0]} />
                                 : <div
                                     style={{
                                         position: "relative",
@@ -211,7 +208,7 @@ export default function ProductItem({
                                     }}
                                 >
                                     <img
-                                        src={productItem.images[0]}
+                                        src={singleProduct.images[0]}
                                         onMouseEnter={(e) => {
                                             // update image size and turn-on magnifier
                                             const elem = e.currentTarget;
@@ -250,7 +247,7 @@ export default function ProductItem({
                                             opacity: "1", // reduce opacity so you can verify position
                                             border: "1px solid lightgray",
                                             backgroundColor: "white",
-                                            backgroundImage: `url(${productItem.images[0]})`,
+                                            backgroundImage: `url(${singleProduct.images[0]})`,
                                             backgroundRepeat: "no-repeat",
 
                                             //calculate zoomed image size
@@ -266,7 +263,7 @@ export default function ProductItem({
                             }
                         </SwiperSlide>
                         <SwiperSlide>
-                            {mediaMax1024 ? <img src={productItem.images[1]} />
+                            {mediaMax1024 ? <img src={singleProduct.images[1]} />
                                 : <div
                                     style={{
                                         position: "relative",
@@ -275,7 +272,7 @@ export default function ProductItem({
                                     }}
                                 >
                                     <img
-                                        src={productItem.images[1]}
+                                        src={singleProduct.images[1]}
                                         onMouseEnter={(e) => {
                                             // update image size and turn-on magnifier
                                             const elem = e.currentTarget;
@@ -314,7 +311,7 @@ export default function ProductItem({
                                             opacity: "1", // reduce opacity so you can verify position
                                             border: "1px solid lightgray",
                                             backgroundColor: "white",
-                                            backgroundImage: `url(${productItem.images[1]})`,
+                                            backgroundImage: `url(${singleProduct.images[1]})`,
                                             backgroundRepeat: "no-repeat",
 
                                             //calculate zoomed image size
@@ -330,7 +327,7 @@ export default function ProductItem({
                             }
                         </SwiperSlide>
                         <SwiperSlide>
-                            {mediaMax1024 ? <img src={productItem.images[2]} />
+                            {mediaMax1024 ? <img src={singleProduct.images[2]} />
                                 : <div
                                     style={{
                                         position: "relative",
@@ -339,7 +336,7 @@ export default function ProductItem({
                                     }}
                                 >
                                     <img
-                                        src={productItem.images[2]}
+                                        src={singleProduct.images[2]}
                                         onMouseEnter={(e) => {
                                             // update image size and turn-on magnifier
                                             const elem = e.currentTarget;
@@ -378,7 +375,7 @@ export default function ProductItem({
                                             opacity: "1", // reduce opacity so you can verify position
                                             border: "1px solid lightgray",
                                             backgroundColor: "white",
-                                            backgroundImage: `url(${productItem.images[2]})`,
+                                            backgroundImage: `url(${singleProduct.images[2]})`,
                                             backgroundRepeat: "no-repeat",
 
                                             //calculate zoomed image size
@@ -394,7 +391,7 @@ export default function ProductItem({
                             }
                         </SwiperSlide>
                         <SwiperSlide>
-                            {mediaMax1024 ? <img src={productItem.images[3]} />
+                            {mediaMax1024 ? <img src={singleProduct.images[3]} />
                                 : <div
                                     style={{
                                         position: "relative",
@@ -403,7 +400,7 @@ export default function ProductItem({
                                     }}
                                 >
                                     <img
-                                        src={productItem.images[3]}
+                                        src={singleProduct.images[3]}
                                         onMouseEnter={(e) => {
                                             // update image size and turn-on magnifier
                                             const elem = e.currentTarget;
@@ -442,7 +439,7 @@ export default function ProductItem({
                                             opacity: "1", // reduce opacity so you can verify position
                                             border: "1px solid lightgray",
                                             backgroundColor: "white",
-                                            backgroundImage: `url(${productItem.images[3]})`,
+                                            backgroundImage: `url(${singleProduct.images[3]})`,
                                             backgroundRepeat: "no-repeat",
 
                                             //calculate zoomed image size
@@ -458,7 +455,7 @@ export default function ProductItem({
                             }
                         </SwiperSlide>
                         <SwiperSlide>
-                            {mediaMax1024 ? <img src={productItem.images[4]} />
+                            {mediaMax1024 ? <img src={singleProduct.images[4]} />
                                 : <div
                                     style={{
                                         position: "relative",
@@ -467,7 +464,7 @@ export default function ProductItem({
                                     }}
                                 >
                                     <img
-                                        src={productItem.images[4]}
+                                        src={singleProduct.images[4]}
                                         onMouseEnter={(e) => {
                                             // update image size and turn-on magnifier
                                             const elem = e.currentTarget;
@@ -506,7 +503,7 @@ export default function ProductItem({
                                             opacity: "1", // reduce opacity so you can verify position
                                             border: "1px solid lightgray",
                                             backgroundColor: "white",
-                                            backgroundImage: `url(${productItem.images[4]})`,
+                                            backgroundImage: `url(${singleProduct.images[4]})`,
                                             backgroundRepeat: "no-repeat",
 
                                             //calculate zoomed image size
@@ -530,24 +527,24 @@ export default function ProductItem({
                         watchSlidesProgress={true}
                         className="mySwiper">
                         <SwiperSlide>
-                            <img src={productItem.images[0]} />
+                            <img src={singleProduct.images[0]} />
                         </SwiperSlide>
                         <SwiperSlide>
-                            <img src={productItem.images[1]} />
+                            <img src={singleProduct.images[1]} />
                         </SwiperSlide>
                         <SwiperSlide>
-                            <img src={productItem.images[2]} />
+                            <img src={singleProduct.images[2]} />
                         </SwiperSlide>
                         <SwiperSlide>
-                            <img src={productItem.images[3]} />
+                            <img src={singleProduct.images[3]} />
                         </SwiperSlide>
                         <SwiperSlide>
-                            <img src={productItem.images[4]} />
+                            <img src={singleProduct.images[4]} />
                         </SwiperSlide>
                     </Swiper>
                 </div>
                 <div className="productItem__right">
-                    <h1 className="product-name">{productItem.name}</h1>
+                    <h1 className="product-name">{singleProduct.name}</h1>
                     <div className="product-stars">
                         <i className="fas fa-star"></i>
                         <i className="fas fa-star"></i>
@@ -556,22 +553,22 @@ export default function ProductItem({
                         <i className="fas fa-star"></i> (7)
                     </div>
                     <p>Availability: <span>In Stock</span></p>
-                    <div className="productItem-price">${productItem.price}</div>
+                    <div className="productItem-price">${singleProduct.price}</div>
                     <ul className="vestibulum">
-                        <li>{productItem.category}</li>
-                        <li>{productItem.brand}</li>
-                        <li>{productItem.desc}</li>
+                        <li>{singleProduct.category}</li>
+                        <li>{singleProduct.brand}</li>
+                        <li>{singleProduct.desc}</li>
                         <div className="color">Color:</div>
                     </ul>
                     <ul className="color-list">
-                        <li className={`white ${colorWhite ? "border-blue" : ""}`}
-                            onClick={selectWhite}></li>
-                        <li className={`dark-orange ${colorYellow ? "border-blue" : ""}`}
-                            onClick={selectYellow}></li>
-                        <li className={`blue ${colorBlue ? "border-blue" : ""}`}
-                            onClick={selectBlue}></li>
-                        <li className={`red ${colorRed ? "border-blue" : ""}`}
-                            onClick={selectRed}></li>
+                        <li className={`white ${singleProduct.color === "white" ? "border-blue" : ""}`}
+                            onClick={() => selectColor("white")}></li>
+                        <li className={`dark-orange ${singleProduct.color === "yellow" ? "border-blue" : ""}`}
+                            onClick={() => selectColor("yellow")}></li>
+                        <li className={`blue ${singleProduct.color === "blue" ? "border-blue" : ""}`}
+                            onClick={() => selectColor("blue")}></li>
+                        <li className={`red ${singleProduct.color === "red" ? "border-blue" : ""}`}
+                            onClick={() => selectColor("red")}></li>
                     </ul>
                     <div className="color">Size:</div>
                     <ul className="sizes">
@@ -584,7 +581,7 @@ export default function ProductItem({
                     </ul>
                     <div className="vishList">
                         <span className='vishlist-span'>
-                            {!productItem.favorite ?
+                            {!singleProduct.favorite ?
                                 <span
                                     className='vishlist-span-inner'
                                     onClick={addToFavorites}>
@@ -606,10 +603,10 @@ export default function ProductItem({
                     <div className="add-product">
                         <div className="product-count">
                             <i onClick={minusItemCount} className="fas fa-minus minus"></i>
-                            <span>{productItem.count}</span>
+                            <span>{singleProduct.count}</span>
                             <i onClick={plusItemCount} className="fas fa-plus plus"></i>
                         </div>
-                        <AddToBasketButton productItem={productItem} />
+                        <AddToBasketButton productItem={singleProduct} />
                         {/* <button onClick={addToBasket}>Add To Basket</button> */}
                     </div>
                 </div>

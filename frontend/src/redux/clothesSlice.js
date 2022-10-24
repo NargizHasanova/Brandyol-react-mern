@@ -99,6 +99,7 @@ export const clothesSlice = createSlice({
         categoriesData: [],
         favoriteBox: [],
         hotSalesData: [],
+        singleProduct: null,
         // products list page after clicking on category(ex:t-shirt)(headerBtm comp.)
         productsPageClothes: [],
         // Filters Data
@@ -205,6 +206,10 @@ export const clothesSlice = createSlice({
             state.isSelectedBrandsEmpty = false
 
             state.selectedBrands = [...new Set(state.selectedBrands)]
+        },
+        //
+        setSingleProduct: (state, { payload }) => {
+            state.singleProduct = payload
         },
         // reset all filters
         resetFilters: (state) => {
@@ -353,7 +358,7 @@ export const clothesSlice = createSlice({
 })
 
 
-export const { showMoreClothesItems, showLessClothesItems, setFavoriteInFavBoxToTrue, removeFromBasket, addToBasket, increaseProductItemCount, decreaseProductItemCount, setProductItemSize, showBar, hideBar, addToFavBox, removeFromFavBox, changeIsFav, setProductItemColor, selectBrands, checkSelectedBrands, resetSelectedGenders, resetSelectedBrands, selectGenders, checkSelectedGenders, checkSelectedPrices, selectPrices, resetFilters } = clothesSlice.actions
+export const { showMoreClothesItems, showLessClothesItems, setFavoriteInFavBoxToTrue, removeFromBasket, addToBasket, increaseProductItemCount, decreaseProductItemCount, setProductItemSize, showBar, hideBar, addToFavBox, removeFromFavBox, changeIsFav, setProductItemColor, selectBrands, checkSelectedBrands, resetSelectedGenders, resetSelectedBrands, selectGenders, checkSelectedGenders, checkSelectedPrices, selectPrices, resetFilters, setSingleProduct } = clothesSlice.actions
 
 export default clothesSlice.reducer
 
