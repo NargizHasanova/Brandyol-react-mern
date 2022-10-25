@@ -35,9 +35,9 @@ export default function BasketItem() {
 
     return (
         basket.map(item => {
-            const { id, images, category, name, price, size, color, count } = item
+            const { _id, images, category, name, price, size, color, count } = item
             return (
-                <div key={id} className='basket-item'>
+                <div key={_id} className='basket-item'>
                     <div className="basket-item-img">
                         <img src={images[0]} alt={category} />
                     </div>
@@ -57,13 +57,13 @@ export default function BasketItem() {
                     </div>
                     <div className="basket-item-price">
                         <div className="basket-item-count">
-                            <span onClick={() => minusCount(id)} className="minus">-</span>
+                            <span onClick={() => minusCount(_id)} className="minus">-</span>
                             <span className="item-count">{count}</span>
-                            <span onClick={() => plusCount(id)} className="plus">+</span>
+                            <span onClick={() => plusCount(_id)} className="plus">+</span>
                         </div>
                         <div className="basket-item-total-price">$ {price * count}</div>
                         <div className="basket-item-trash">
-                            <Button onClick={() => showPromiseConfirm(id)}>
+                            <Button onClick={() => showPromiseConfirm(_id)}>
                                 <i className="fal fa-trash-alt"></i>
                             </Button>
                         </div>

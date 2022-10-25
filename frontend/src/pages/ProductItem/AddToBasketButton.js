@@ -3,9 +3,9 @@ import ReactiveButton from 'reactive-button';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToBasket } from '../../redux/clothesSlice';
 
-export default function AddToBasketButton({productItem}) {
+export default function AddToBasketButton({ singleProduct }) {
     const dispatch = useDispatch()
-    // const { productItem } = useSelector(state => state.clothes)
+    const { basket } = useSelector(state => state.clothes)
     const [state, setState] = useState('idle');
 
     const onClickHandler = () => {
@@ -32,7 +32,7 @@ export default function AddToBasketButton({productItem}) {
             successText={'Success'}
             errorText={'Error'}
             type={'button'}
-            className={`addToBasketBtn ${(!productItem.size.length || !productItem.color.length) && 'disabledAddToBasketBtn'}`}
+            className={`addToBasketBtn ${(!singleProduct.size.length || !singleProduct.color.length) && 'disabledAddToBasketBtn'}`}
             style={{ borderRadius: '5px' }}
             outline={false}
             shadow={false}
@@ -40,7 +40,7 @@ export default function AddToBasketButton({productItem}) {
             size={'normal'}
             block={false}
             // messageDuration={2000}
-            disabled={(!productItem.size.length || !productItem.color.length) ? true : false}
+            disabled={(!singleProduct.size.length || !singleProduct.color.length) ? true : false}
             buttonRef={null}
             width={null}
             height={null}

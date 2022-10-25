@@ -73,7 +73,6 @@ export const getAllPrices = async (req, res) => {
 export const getAllHotSales = async (req, res) => {
     try {
         let hotSales = await HotsalesModel.find()
-        console.log(hotSales);
         return res.json(hotSales)
     } catch (err) {
         return res.status(500).json({
@@ -83,7 +82,7 @@ export const getAllHotSales = async (req, res) => {
     }
 }
 
-// NEW
+// SEARCH BY QUERY TYPE
 export const searchByQueryType = async (req, res) => {
     // http://localhost:4444/search?cat=Jeans&brand=Mavi,Bershka
     try {
@@ -192,5 +191,18 @@ export const getSingleProduct = async (req, res) => {
         res.status(500).json({
             message: 'Failed to get products',
         });
+    }
+}
+
+// CHANGE SINGLE POST
+export const editProduct = async (req, res) => {
+    try {
+        const updatedProduct = await ProductModel.findByIdAndUpdate(req.params.id, {
+            $set: req.body
+        }, { new: true })
+
+        return res.status(200).json(updatedProduct)
+    } catch (err) {
+        return res.status(500).json(err.message)
     }
 }

@@ -2,33 +2,43 @@ import React from 'react'
 import { useNavigate } from 'react-router';
 import { FaHeart } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
-import { changeIsFav, removeFromFavBox, addToFavBox } from '../../redux/clothesSlice'
+import { changeIsFav, removeFromFavBox, addToFavBox, fetchClothesData, changeSingleProductFav } from '../../redux/clothesSlice'
 import CardSkeleton from './ProductSkeleton';
+import { useEffect } from 'react';
+import { useState } from 'react';
+import { Axios } from '../../servicesAPI';
 
 export default function ProductCards() {
     const dispatch = useDispatch()
     const { productsPageClothes, filterBarVisible } = useSelector(state => state.clothes)
-
     const navigate = useNavigate();
 
     function itemInfo(item) {
-        // dispatch(setProductItem(item))
         navigate(`/product_item/${item._id}`)
     }
 
-    function addToFavorites(id, singleItem) {
-        dispatch(changeIsFav(id))
-        dispatch(addToFavBox(singleItem))
-    }
-
-    function removeFromFavorites(id) {
-        dispatch(changeIsFav(id))
-        dispatch(removeFromFavBox(id))
+    async function changeFavorites(singleProduct) {
+        dispatch(changeIsFav(singleProduct._id))
+        await Axios.put(`/editProduct/${singleProduct._id}`, {
+            category: singleProduct.category,
+            brand: singleProduct.brand,
+            gender: singleProduct.gender,
+            name: singleProduct.name,
+            desc: singleProduct.desc,
+            price: singleProduct.price,
+            selected: singleProduct.selected,
+            images: singleProduct.images,
+            size: singleProduct.size,
+            color: singleProduct.color,
+            count: singleProduct.count,
+            favorite: !singleProduct.favorite
+        })
+        dispatch(changeSingleProductFav())
     }
 
     return (
         productsPageClothes.length === 0
-            ? 
+            ?
             <>
                 <CardSkeleton />
                 <CardSkeleton />
@@ -56,9 +66,9 @@ export default function ProductCards() {
 
                                             {/* === like === */}
                                             {!favorite &&
-                                                <i onClick={() => addToFavorites(_id, item)} className="fas fa-heart"></i>}
+                                                <i onClick={() => changeFavorites(item)} className="fas fa-heart"></i>}
                                             {favorite &&
-                                                <i onClick={() => removeFromFavorites(_id)} className="filled-heart"><FaHeart /></i>}
+                                                <i onClick={() => changeFavorites(item)} className="filled-heart"><FaHeart /></i>}
                                         </div>
                                     </div>
                                 </div>

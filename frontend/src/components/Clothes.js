@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router';
 import WaitingGif from './WaitingGif'
 import { useDispatch, useSelector } from "react-redux";
-import { setFavoriteInFavBoxToTrue, changeIsFav, setCategoryName, addToFavBox, setProductItem, removeFromFavBox, showMoreClothesItems, showLessClothesItems } from "../redux/clothesSlice";
+import {  changeIsFav, showMoreClothesItems, showLessClothesItems } from "../redux/clothesSlice";
+import { Axios } from "../servicesAPI";
 
 export default function Clothes() {
     const dispatch = useDispatch()
@@ -16,9 +17,7 @@ export default function Clothes() {
     }, [clothes.data, clothes.numOfItem]);
 
     function itemInfo(item) {
-        // dispatch(setCategoryName(item.category))
-        // dispatch(setProductItem(item))
-        navigate(`product_item/${item._id}`)
+        navigate(`/product_item/${item._id}`)
     }
     function showMoreFoo() {
         dispatch(showMoreClothesItems())
@@ -28,16 +27,24 @@ export default function Clothes() {
         dispatch(showLessClothesItems())
     }
 
-    function addToFavorites(id, singleItem) {
-        dispatch(changeIsFav(id))
-        dispatch(addToFavBox(singleItem))
-        dispatch(setFavoriteInFavBoxToTrue())
+    async function changeFavorites(singleItem) {
+        dispatch(changeIsFav(singleItem._id))
+        await Axios.put(`/editProduct/${singleItem._id}`, {
+            category: singleItem.category,
+            brand: singleItem.brand,
+            gender: singleItem.gender,
+            name: singleItem.name,
+            desc: singleItem.desc,
+            price: singleItem.price,
+            selected: singleItem.selected,
+            images: singleItem.images,
+            size: singleItem.size,
+            color: singleItem.color,
+            count: singleItem.count,
+            favorite: !singleItem.favorite
+        })
     }
 
-    function removeFromFavorites(id) {
-        dispatch(changeIsFav(id))
-        dispatch(removeFromFavBox(id))
-    }
 
     return (
         <section className="clothes-home">
@@ -60,11 +67,11 @@ export default function Clothes() {
                                                     className="far fa-search">
                                                 </i>
                                                 {!favorite &&
-                                                    <i onClick={() => addToFavorites(_id, item)}
+                                                    <i onClick={() => changeFavorites(item)}
                                                         className="fas fa-heart">
                                                     </i>}
                                                 {favorite &&
-                                                    <i onClick={() => removeFromFavorites(_id)}
+                                                    <i onClick={() => changeFavorites(item)}
                                                         className="filled-heart"><FaHeart />
                                                     </i>}
                                             </div>

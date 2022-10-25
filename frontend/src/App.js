@@ -12,8 +12,18 @@ import { Route, Routes } from 'react-router';
 import SignIn from './pages/Sign/SignIn';
 import SignUp from './pages/Sign/SignUp';
 import Favorites from './pages/Favorites';
+import { useDispatch } from 'react-redux';
+import { fetchCategories, fetchClothesData, fetchHotSales } from './redux/clothesSlice';
+import { useEffect } from 'react';
 
 function App() {
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(fetchCategories())
+    dispatch(fetchHotSales())
+    dispatch(fetchClothesData())
+  }, [])
 
   return (
     <>

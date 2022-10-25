@@ -22,6 +22,12 @@ home pagede search input
 
 asynthunki reducersin icinde nece istifade ede bilerem?
 
+// new Map tutorial
+
+AddToBasketButton componentinde cleartimeout elemek laizmdi ama nece bilmirem(useffect?)
+
+biidene favorite deyismek isteyiremse editde butun qalan key valuelari oturmeliyem yenede?
+
 
 
 

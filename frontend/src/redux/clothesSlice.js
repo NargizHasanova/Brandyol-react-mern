@@ -211,6 +211,12 @@ export const clothesSlice = createSlice({
         setSingleProduct: (state, { payload }) => {
             state.singleProduct = payload
         },
+        setProductColor: (state, { payload }) => {
+            state.singleProduct.color = payload
+        },
+        setProductSize: (state, { payload }) => {
+            state.singleProduct.size = payload
+        },
         // reset all filters
         resetFilters: (state) => {
             state.selectedBrands = []
@@ -259,38 +265,28 @@ export const clothesSlice = createSlice({
             })
         },
         addToBasket: (state) => {
-            state.basket = [...new Set([...state.basket, state.productItem])]
+            let basket = [...state.basket, state.singleProduct]
+            state.basket = [...new Map(basket.map((item) => [item["_id"], item])).values()]
         },
         removeFromBasket: (state, { payload }) => {
-            state.basket = state.basket.filter(item => item.id !== payload)
+            state.basket = state.basket.filter(item => item._id !== payload)
+        },
+        changeSingleProductFav: (state, { payload }) => {
+            state.singleProduct.favorite = !state.singleProduct.favorite
         },
         changeIsFav: (state, { payload }) => {
-            state.productItem.favorite = !state.productItem.favorite
             state.data.map(item => {
-                if (item.id === payload) {
+                if (item._id === payload) {
                     item.favorite = !item.favorite
                 }
                 return item
             })
             state.productsPageClothes.map(item => {
-                if (item.id === payload) {
+                if (item._id === payload) {
                     item.favorite = !item.favorite
                 }
                 return item
             })
-        },
-        addToFavBox: (state, { payload }) => {
-            console.log(state.favoriteBox);
-            state.favoriteBox = [...new Set([...state.favoriteBox, payload])]
-        },
-        setFavoriteInFavBoxToTrue: (state) => {
-            state.favoriteBox.map(item => {
-                item.favorite = true
-                return item
-            })
-        },
-        removeFromFavBox: (state, { payload }) => {
-            state.favoriteBox = state.favoriteBox.filter(item => item.id !== payload)
         },
         showBar: (state) => {
             state.filterBarIsVisible = true
@@ -299,19 +295,19 @@ export const clothesSlice = createSlice({
             state.filterBarIsVisible = false
         },
         increaseProductItemCount: (state, { payload }) => {
-            state.productItem.count = state.productItem.count + 1
+            state.singleProduct.count = state.singleProduct.count + 1
             state.basket.map(item => {
-                if (item.id === payload) {
+                if (item._id === payload) {
                     item.count += 1
                 }
                 return item
             })
         },
         decreaseProductItemCount: (state, { payload }) => {
-            if (state.productItem.count > 1) {
-                state.productItem.count = state.productItem.count - 1
+            if (state.singleProduct.count > 1) {
+                state.singleProduct.count = state.singleProduct.count - 1
                 state.basket.map(item => {
-                    if (item.id === payload) {
+                    if (item._id === payload) {
                         item.count -= 1
                     }
                     return item
@@ -358,7 +354,7 @@ export const clothesSlice = createSlice({
 })
 
 
-export const { showMoreClothesItems, showLessClothesItems, setFavoriteInFavBoxToTrue, removeFromBasket, addToBasket, increaseProductItemCount, decreaseProductItemCount, setProductItemSize, showBar, hideBar, addToFavBox, removeFromFavBox, changeIsFav, setProductItemColor, selectBrands, checkSelectedBrands, resetSelectedGenders, resetSelectedBrands, selectGenders, checkSelectedGenders, checkSelectedPrices, selectPrices, resetFilters, setSingleProduct } = clothesSlice.actions
+export const { showMoreClothesItems, showLessClothesItems, removeFromBasket, addToBasket, increaseProductItemCount, decreaseProductItemCount, setProductItemSize, showBar, hideBar, changeIsFav, setProductItemColor, selectBrands, checkSelectedBrands, resetSelectedGenders, resetSelectedBrands, selectGenders, checkSelectedGenders, checkSelectedPrices, selectPrices, resetFilters, setSingleProduct, setProductColor, setProductSize,changeSingleProductFav } = clothesSlice.actions
 
 export default clothesSlice.reducer
 

@@ -4,7 +4,7 @@ import { AiOutlineBook, AiOutlineMessage, AiOutlineLogout, AiOutlineQuestionCirc
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../redux/userSlice';
-import { resetFilters } from '../redux/clothesSlice';
+import { fetchClothesData, resetFilters } from '../redux/clothesSlice';
 
 export default function HeaderTop() {
     const dispatch = useDispatch()
@@ -14,6 +14,7 @@ export default function HeaderTop() {
 
     function goHome() {
         dispatch(resetFilters())
+        dispatch(fetchClothesData())
         navigate("/")
     }
 

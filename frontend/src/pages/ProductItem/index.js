@@ -10,7 +10,7 @@ import 'antd/dist/antd.css';
 import sizeChart from '../../assets/images/size-chart.jpg'
 import { useMediaQuery } from 'react-responsive'
 import { useSelector, useDispatch } from 'react-redux';
-import { setProductItemSize, setProductItemColor, increaseProductItemCount, decreaseProductItemCount, setSingleProduct } from '../../redux/clothesSlice';
+import { increaseProductItemCount, decreaseProductItemCount, setSingleProduct, setProductColor, setProductSize, changeIsFav, removeFromFavBox, addToFavBox, fetchFilteredProducts, resetFilters, fetchClothesData, changeSingleProductFav } from '../../redux/clothesSlice';
 
 // Import Swiper styles
 import "swiper/css";
@@ -39,8 +39,10 @@ export default function ProductItem({
     zoomLevel = 1.7
 }) {
     const dispatch = useDispatch()
+    const navigate = useNavigate()
     const { singleProduct } = useSelector(state => state.clothes)
     const { id: productId } = useParams()
+
 
     useEffect(() => {
         if (productId) {
@@ -50,134 +52,52 @@ export default function ProductItem({
         }
     }, []);
 
-
     const [thumbsSwiper, setThumbsSwiper] = useState(null);
-    const [bgColorOfSizeXS, setBgColorOfSizeXS] = useState(false);
-    const [bgColorOfSizeS, setBgColorOfSizeS] = useState(false);
-    const [bgColorOfSizeM, setBgColorOfSizeM] = useState(false);
-    const [bgColorOfSizeL, setBgColorOfSizeL] = useState(false);
-    const [bgColorOfSizeXL, setBgColorOfSizeXL] = useState(false);
-    const [bgColorOfSizeXXL, setBgColorOfSizeXXL] = useState(false);
-    const [colorWhite, setColorWhite] = useState(false);
-    const [colorYellow, setColorYellow] = useState(false);
-    const [colorBlue, setColorBlue] = useState(false);
-    const [colorRed, setColorRed] = useState(false);
     //zoom image on hover
     const [[x, y], setXY] = useState([0, 0]);
     const [[imgWidth, imgHeight], setSize] = useState([0, 0]);
     const [showMagnifier, setShowMagnifier] = useState(false);
-    //navigate
-    const navigate = useNavigate();
     //responsive
     const mediaMax1024 = useMediaQuery({ query: '(max-width: 1024px)' })
 
     function plusItemCount() {
         dispatch(increaseProductItemCount())
     }
-
     function minusItemCount() {
         dispatch(decreaseProductItemCount())
     }
-
-    function selectColor() {
-        dispatch(setProductItemColor("#fff"))
-        setColorWhite(prev => !prev)
-        setColorBlue(false)
-        setColorRed(false)
-        setColorYellow(false)
-    }
-    function selectYellow() {
-        dispatch(setProductItemColor("#C38C39"))
-        setColorYellow(prev => !prev)
-        setColorBlue(false)
-        setColorRed(false)
-        setColorWhite(false)
-    }
-    function selectBlue() {
-        dispatch(setProductItemColor("#5F9185"))
-        setColorBlue(prev => !prev)
-        setColorWhite(false)
-        setColorRed(false)
-        setColorYellow(false)
-    }
-    function selectRed() {
-        dispatch(setProductItemColor("#AD4F45"))
-        setColorRed(prev => !prev)
-        setColorBlue(false)
-        setColorWhite(false)
-        setColorYellow(false)
+    function selectColor(color) {
+        dispatch(setProductColor(color))
     }
 
-    function selectXS() {
-        dispatch(setProductItemSize('XS'))
-        setBgColorOfSizeXS(prev => !prev)
-        setBgColorOfSizeS(false);
-        setBgColorOfSizeM(false);
-        setBgColorOfSizeL(false);
-        setBgColorOfSizeXL(false);
-        setBgColorOfSizeXXL(false);
-    }
-    function selectS() {
-        dispatch(setProductItemSize('S'))
-        setBgColorOfSizeS(prev => !prev)
-        setBgColorOfSizeXS(false);
-        setBgColorOfSizeM(false);
-        setBgColorOfSizeL(false);
-        setBgColorOfSizeXL(false);
-        setBgColorOfSizeXXL(false);
-    }
-    function selectM() {
-        dispatch(setProductItemSize('M'))
-        setBgColorOfSizeM(prev => !prev)
-        setBgColorOfSizeS(false);
-        setBgColorOfSizeXS(false);
-        setBgColorOfSizeL(false);
-        setBgColorOfSizeXL(false);
-        setBgColorOfSizeXXL(false);
-    }
-    function selectL() {
-        dispatch(setProductItemSize('L'))
-        setBgColorOfSizeL(prev => !prev)
-        setBgColorOfSizeS(false);
-        setBgColorOfSizeM(false);
-        setBgColorOfSizeXS(false);
-        setBgColorOfSizeXL(false);
-        setBgColorOfSizeXXL(false);
-    }
-    function selectXL() {
-        dispatch(setProductItemSize('XL'))
-        setBgColorOfSizeXL(prev => !prev)
-        setBgColorOfSizeS(false);
-        setBgColorOfSizeM(false);
-        setBgColorOfSizeL(false);
-        setBgColorOfSizeXS(false);
-        setBgColorOfSizeXXL(false);
-    }
-    function selectXXL() {
-        dispatch(setProductItemSize('XXL'))
-        setBgColorOfSizeXXL(prev => !prev)
-        setBgColorOfSizeS(false);
-        setBgColorOfSizeM(false);
-        setBgColorOfSizeL(false);
-        setBgColorOfSizeXL(false);
-        setBgColorOfSizeXS(false);
+    function selectSize(size) {
+        dispatch(setProductSize(size))
     }
 
-    function addToFavorites() {
-        // dispatch(changeIsFav(productItem._id))
-        // dispatch(addToFavBox(productItem))
+    
+    async function changeFavorites() {
+        dispatch(changeIsFav(singleProduct._id))
+        await Axios.put(`/editProduct/${singleProduct._id}`, {
+            category: singleProduct.category,
+            brand: singleProduct.brand,
+            gender: singleProduct.gender,
+            name: singleProduct.name,
+            desc: singleProduct.desc,
+            price: singleProduct.price,
+            selected: singleProduct.selected,
+            images: singleProduct.images,
+            size: singleProduct.size,
+            color: singleProduct.color,
+            count: singleProduct.count,
+            favorite: !singleProduct.favorite
+        })
+        dispatch(changeSingleProductFav())
     }
 
-    function removeFromFavorites() {
-        // dispatch(changeIsFav(productItem._id))
-        // dispatch(removeFromFavBox(productItem._id))
-    }
-
-    function selectCategory() {
-        // dispatch(setFilteredProducts(productItem.category))
-        // dispatch(setCategoryName(productItem.category))
-        // dispatch(resetFilterBar())
-        // navigate("/products")
+    function selectCategory(category) {
+        dispatch(fetchFilteredProducts({ category: category }))
+        dispatch(resetFilters())
+        navigate(`/search/?cat=${category}`)
     }
 
     return (
@@ -185,7 +105,7 @@ export default function ProductItem({
             <div className="path container">
                 <Link to="/" className="path-home" href="index.html">Home</Link>
                 <i className="fas fa-angle-double-right"></i>
-                <span onClick={selectCategory} className="path-home" href="index.html">{singleProduct.category}</span>
+                <span onClick={() => selectCategory(singleProduct.category)} className="path-home" href="index.html">{singleProduct.category}</span>
                 <i className="fas fa-angle-double-right"></i>
                 <span className="path-productItem" href="products.html">Product</span>
             </div>
@@ -572,24 +492,30 @@ export default function ProductItem({
                     </ul>
                     <div className="color">Size:</div>
                     <ul className="sizes">
-                        <li className={bgColorOfSizeXS ? `clicked-size-btn` : ""} onClick={selectXS}>XS</li>
-                        <li className={bgColorOfSizeS ? `clicked-size-btn` : ""} onClick={selectS}>S</li>
-                        <li className={bgColorOfSizeM ? `clicked-size-btn` : ""} onClick={selectM}>M</li>
-                        <li className={bgColorOfSizeL ? `clicked-size-btn` : ""} onClick={selectL}>L</li>
-                        <li className={bgColorOfSizeXL ? `clicked-size-btn` : ""} onClick={selectXL}>XL</li>
-                        <li className={bgColorOfSizeXXL ? `clicked-size-btn` : ""} onClick={selectXXL}>XXL</li>
+                        <li className={singleProduct.size === "XS" ? "border-blue" : ""}
+                            onClick={() => selectSize("XS")}>XS</li>
+                        <li className={singleProduct.size === "S" ? "border-blue" : ""}
+                            onClick={() => selectSize("S")}>S</li>
+                        <li className={singleProduct.size === "M" ? "border-blue" : ""}
+                            onClick={() => selectSize("M")}>M</li>
+                        <li className={singleProduct.size === "L" ? "border-blue" : ""}
+                            onClick={() => selectSize("L")}>L</li>
+                        <li className={singleProduct.size === "XL" ? "border-blue" : ""}
+                            onClick={() => selectSize("XL")}>XL</li>
+                        <li className={singleProduct.size === "XXL" ? "border-blue" : ""}
+                            onClick={() => selectSize("XXL")}>XXL</li>
                     </ul>
                     <div className="vishList">
                         <span className='vishlist-span'>
                             {!singleProduct.favorite ?
                                 <span
                                     className='vishlist-span-inner'
-                                    onClick={addToFavorites}>
+                                    onClick={changeFavorites}>
                                     <i className="far fa-heart"></i>Add to Wishlist
                                 </span>
                                 : <span
                                     className='fontawesome-span'
-                                    onClick={removeFromFavorites}>
+                                    onClick={changeFavorites}>
                                     <i className='colored-heart'>
                                         <FontAwesomeIcon icon={faHeart} />
                                     </i>Added to Wishlist
@@ -606,7 +532,7 @@ export default function ProductItem({
                             <span>{singleProduct.count}</span>
                             <i onClick={plusItemCount} className="fas fa-plus plus"></i>
                         </div>
-                        <AddToBasketButton productItem={singleProduct} />
+                        <AddToBasketButton singleProduct={singleProduct} />
                         {/* <button onClick={addToBasket}>Add To Basket</button> */}
                     </div>
                 </div>
