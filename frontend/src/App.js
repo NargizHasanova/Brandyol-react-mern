@@ -15,11 +15,13 @@ import Favorites from './pages/Favorites';
 import { useDispatch } from 'react-redux';
 import { fetchCategories, fetchClothesData, fetchHotSales } from './redux/clothesSlice';
 import { useEffect } from 'react';
+import { fetchMe } from './redux/userSlice';
 
 function App() {
   const dispatch = useDispatch()
 
   useEffect(() => {
+    dispatch(fetchMe())
     dispatch(fetchCategories())
     dispatch(fetchHotSales())
     dispatch(fetchClothesData())
@@ -32,13 +34,13 @@ function App() {
       <HeaderBtm />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="search" element={<Products />} />
-        <Route path="product_item/:id" element={<ProductItem />} />
-        <Route path="product_cards" element={<ProductCards />} />
-        <Route path="basket" element={<Basket />} />
-        <Route path="sign-in" element={<SignIn />} />
-        <Route path="sign-up" element={<SignUp />} />
-        <Route path="favorites" element={<Favorites />} />
+        <Route path="/search" element={<Products />} />
+        <Route path="/product_item/:id" element={<ProductItem />} />
+        <Route path="/product_cards" element={<ProductCards />} />
+        <Route path="/basket" element={<Basket />} />
+        <Route path="/login" element={<SignIn />} />
+        <Route path="/register" element={<SignUp />} />
+        <Route path="/favorites" element={<Favorites />} />
       </Routes>
       <Footer />
     </>

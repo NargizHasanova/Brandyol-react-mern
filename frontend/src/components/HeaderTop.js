@@ -9,7 +9,7 @@ import { fetchClothesData, resetFilters } from '../redux/clothesSlice';
 export default function HeaderTop() {
     const dispatch = useDispatch()
     const { basket } = useSelector(state => state.clothes)
-    const { signedIn, signedInEmail } = useSelector(state => state.users)
+    const { isAuthorized, user } = useSelector(state => state.users)
     const navigate = useNavigate();
 
     function goHome() {
@@ -21,7 +21,8 @@ export default function HeaderTop() {
     function goToBasketPage() {
         navigate("/basket")
     }
-    function logOut(){
+    
+    function logOut() {
         dispatch(logout())
         window.location.reload()
         navigate("/")
@@ -48,15 +49,15 @@ export default function HeaderTop() {
 
             <div className="header_top-right">
                 <div className="sign">
-                    <Link to="/sign-in">
+                    <Link to="/login">
                         <i className="far fa-user"></i>
-                        {signedIn && <span>Account</span>}
-                        {!signedIn && <span>Sign In</span>}
+                        {isAuthorized && <span>Account</span>}
+                        {!isAuthorized && <span>Sign In</span>}
                     </Link>
-                    {signedIn &&
+                    {isAuthorized &&
                         <ul className='login-dropdown'>
                             <Link to="/">
-                                <span className='mail'>{signedInEmail}</span>
+                                <span className='mail'>{user.email}</span>
                             </Link>
                             <Link to="/">
                                 <AiOutlineBook />

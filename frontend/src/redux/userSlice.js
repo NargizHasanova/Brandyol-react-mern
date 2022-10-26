@@ -1,94 +1,87 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { Axios } from '../servicesAPI';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { Axios } from "../servicesAPI";
 
-export const fetchUsersData = createAsyncThunk("users/fetchUsers",
-    async () => {
-        const { data } = await Axios.get("/brandyol-users.json")
-        console.log('getData', data);
+export const fetchLogin = createAsyncThunk("users/fetchLogin",
+    async (params) => {
+        const { data } = await Axios.post("/auth/login", params)
+        console.log(data);
         return data
     }
 )
 
-export const postUsersData = createAsyncThunk("users/postUsers",
-    async (signUpData) => {
-        await Axios.post("/brandyol-users.json", signUpData)
+export const fetchRegister = createAsyncThunk("users/fetchRegister",
+    async (params) => {
+        const { data } = await Axios.post("/auth/register", params)
+        return data
     }
 )
 
-export const userSlice = createSlice({
-    name: "users",
-    initialState: {
-        data: [],
-        signedIn: null,
-        signedInEmail: '',
-        pendingGet: false,
-        pendingPost: false,
-        errorGet: false,
-        errorPost: false,
-    },
-    reducers: {
-        checkUser: (state, { payload }) => {
-            if (state.data.length === 0) {
-                console.log("user does not exist!");
-                state.signedIn = false
-                return
-            }
-            state.data.map(item => {
-                if (item.email === payload.email && item.password === payload.password) {
-                    console.log('you signed In !!');
-                    state.signedIn = true
-                    state.signedInEmail = item.email
-                } else {
-                    state.signedIn = false
-                    console.log("user does not exist!");
-                }
-                return item
-            })
-        },
-        signUpEmail: (state, { payload }) => {
-            state.signedInEmail = payload
-        },
-        logout: (state) => {
-            state.signedIn = null
-            state.signedInEmail = ""
-        }
+export const fetchMe = createAsyncThunk("users/fetchMe",
+    async () => {
+        const { data } = await Axios.get("/auth/me")
+        return data
+    }
+)
 
+const initialState = {
+    status: 'loading',
+    isAuthorized: false,
+    user: null
+}
+
+export const userSlice = createSlice({
+    name: 'users',
+    initialState,
+    reducers: {
+        logout: (state) => {
+            state.isAuthorized = false
+            window.localStorage.removeItem('token')
+        }
     },
     extraReducers: {
-        [fetchUsersData.pending]: (state) => {
-            state.pendingGet = true
-            state.errorGet = false
+        [fetchLogin.pending]: (state) => {
+            state.user = null
+            state.status = 'loading'
         },
-        [fetchUsersData.fulfilled]: (state, { payload }) => {
-            console.log('fulfilled');
-            state.pendingGet = false
-            // burda datamiz object seklinde gelir bunu []-ye cevirmeliyik
-            for (let key in payload) {
-                state.data = [...state.data, payload[key]]
-            }
+        [fetchLogin.fulfilled]: (state, { payload }) => {
+            state.status = 'loaded'
+            state.user = payload
+            state.isAuthorized = true
         },
-        [fetchUsersData.rejected]: (state, action) => {
-            console.log('rejected');
-            state.errorGet = action.error.message
-            state.pendingGet = false
+        [fetchLogin.rejected]: (state, { payload }) => {
+            state.status = 'error'
+            state.user = null
         },
-        [postUsersData.pending]: (state) => {
-            state.pendingPost = true
-            state.errorPost = false
+        [fetchRegister.pending]: (state) => {
+            state.user = null
+            state.status = 'loading'
         },
-        [postUsersData.fulfilled]: (state) => {
-            console.log('fulfilled');
-            state.pendingPost = false
-            state.signedIn = true
+        [fetchRegister.fulfilled]: (state, { payload }) => {
+            state.status = 'loaded'
+            state.user = payload
+            state.isAuthorized = true
         },
-        [postUsersData.rejected]: (state, action) => {
-            console.log('rejected');
-            state.errorPost = action.error.message
-            state.pendingPost = false
+        [fetchRegister.rejected]: (state, { payload }) => {
+            state.status = 'error'
+            state.user = null
         },
+        [fetchMe.pending]: (state) => {
+            state.user = null
+            state.status = 'loading'
+        },
+        [fetchMe.fulfilled]: (state, { payload }) => {
+            state.status = 'loaded'
+            state.user = payload
+            state.isAuthorized = true
+        },
+        [fetchMe.rejected]: (state, action) => {
+            console.log(action.error);
+            state.status = 'error'
+            state.user = null
+        }
     }
 })
 
+export const { logout } = userSlice.actions
 
-export const { checkUser, logout, signUpEmail } = userSlice.actions
 export default userSlice.reducer

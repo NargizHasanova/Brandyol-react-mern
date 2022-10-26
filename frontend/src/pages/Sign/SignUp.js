@@ -13,125 +13,41 @@ import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { useNavigate } from 'react-router';
-import { logout, postUsersData, signUpEmail } from '../../redux/userSlice'
+import { fetchRegister, logout, postUsersData, signUpEmail } from '../../redux/userSlice'
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react'
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 
 const theme = createTheme()
 
 export default function SignUp() {
+  const { isAuthorized } = useSelector((state) => state.users)
   const dispatch = useDispatch()
-  const users = useSelector(state => state.users)
-  const navigate = useNavigate()
-  const [user, setUser] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
+
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isValid },
+  } = useForm({
+    defaultValues: {
+      fullName: '',
+      email: '',
+      password: '',
+    },
+    mode: 'onChange',
   })
-  const [error, setError] = useState({
-    firstNameError: false,
-    lastNameError: false,
-    emailError: false,
-    passwordError: false,
-  })
 
-  //sil bunu sonra
-  // useEffect(() => {
-  //   users.signedIn && navigate("/")
-  // }, [users.signedIn]);
-
-
-  useEffect(() => {
-    if (user.firstName.trim().length <= 1 || typeof (Number(user.firstName)) === "number") {
-      setError(prev => ({ ...prev, firstNameError: true }))
+  const onSubmit = async (data) => {
+    console.log(data)
+    const res = await dispatch(fetchRegister(data))
+    if (!res.payload) {
+      return alert('ne udalos avtorizovatsa')
     }
-    if (user.firstName.trim().length > 1 ||
-      typeof (Number(user.firstName)) !== "number" ||
-      user.firstName.trim().length === 0) {
-      setError(prev => ({ ...prev, firstNameError: false }))
+    if ('token' in res.payload) {
+      window.localStorage.setItem('token', res.payload.token)
     }
-    if (user.lastName.trim().length <= 1 || typeof (Number(user.lastName)) === "number") {
-      setError(prev => ({ ...prev, lastNameError: true }))
-    }
-    if (user.lastName.trim().length > 1 ||
-      typeof (Number(user.lastName)) !== "number" ||
-      user.lastName.trim().length === 0) {
-      setError(prev => ({ ...prev, lastNameError: false }))
-    }
-    if (!user.email.includes('@')) {
-      setError(prev => ({ ...prev, emailError: true }))
-    }
-    if (user.email.includes('@') || user.email.trim().length === 0) {
-      setError(prev => ({ ...prev, emailError: false }))
-    }
-    if (user.password.trim().length < 4) {
-      setError(prev => ({ ...prev, passwordError: true }))
-    }
-    if (user.password.trim().length >= 4 || user.password.trim().length === 0) {
-      setError(prev => ({ ...prev, passwordError: false }))
-    }
-  }, [user.firstName, user.lastName, user.email, user.password]);
-
-  function onInputChange(e) {
-    setUser({ ...user, [e.target.name]: e.target.value })
-  }
-
-  console.log(user);
-  async function handleSubmit(event) {
-    event.preventDefault()
-    // bu yoxlamalari reduxa sal burda yazma
-    if (
-      error.firstNameError ||
-      user.firstName.trim().length === 0) {
-      setError(prev => ({ ...prev, firstNameError: true }))
-      return
-    }
-    if (
-      error.lastNameError ||
-      user.lastName.trim().length === 0
-    ) {
-      setError(prev => ({ ...prev, lastNameError: true }))
-      return
-    }
-    if (
-      error.emailError ||
-      user.email.trim().length === 0
-    ) {
-      setError(prev => ({ ...prev, emailError: true }))
-      return
-    }
-    if (
-      error.passwordError ||
-      user.password.trim().length === 0
-    ) {
-      setError(prev => ({ ...prev, passwordError: true }))
-      return
-    }
-
-    if (Object.values(user).filter(item => item.length === 0).length > 0) {
-      console.log('kecmedi');
-      return
-    }
-    const data = new FormData(event.currentTarget)
-    console.log({
-      // firstName: data.get('firstName'),
-      // lastName: data.get('lastName'),
-      email: data.get('email'),
-      password: data.get('password'),
-    })
-    const signUpData = {
-      email: data.get('email'),
-      password: data.get('password'),
-    }
-    dispatch(postUsersData(signUpData))
-    dispatch(signUpEmail(signUpData.email))
-    navigate("/")
-  }
-
-  function quit() {
-    dispatch(logout())
   }
 
   return (
@@ -155,66 +71,63 @@ export default function SignUp() {
           <Box
             component="form"
             noValidate
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmit(onSubmit)}
             sx={{ mt: 3 }}
           >
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  value={user.firstName}
-                  onChange={onInputChange}
-                  error={error.firstNameError}
-                  id={error.firstNameError ? "outlined-error-helper-text" : "firstName"}
-                  helperText={error.firstNameError ? "Incorrect name." : ""}
                   autoComplete="given-name"
                   name="firstName"
                   required={true}
-                  fullWidth
                   label="First Name"
                   autoFocus
+                  error={Boolean(errors.firstName?.message)}
+                  helperText={errors.firstName?.message}
+                  type="text"
+                  fullWidth
+                  {...register('firstName', { required: 'укажите имя' })}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  value={user.lastName}
-                  onChange={onInputChange}
-                  error={error.lastNameError}
-                  id={error.lastNameError ? "outlined-error-helper-text" : "lastName"}
-                  helperText={error.lastNameError ? "Incorrect last name." : ""}
                   required
                   fullWidth
                   label="Last Name"
                   name="lastName"
                   autoComplete="family-name"
+
+                  error={Boolean(errors.lastName?.message)}
+                  helperText={errors.lastName?.message}
+                  type="text"
+                  {...register('lastName', { required: 'enter last name' })}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  value={user.email}
-                  onChange={onInputChange}
-                  error={error.emailError}
-                  id={error.emailError ? "outlined-error-helper-text" : "email"}
-                  helperText={error.emailError ? "Incorrect email." : ""}
                   required
-                  fullWidth
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  error={Boolean(errors.email?.message)}
+                  helperText={errors.email?.message}
+                  type="email"
+                  fullWidth
+                  {...register('email', { required: 'укажите почту' })}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  value={user.password}
-                  onChange={onInputChange}
-                  error={error.passwordError}
-                  id={error.passwordError ? "outlined-error-helper-text" : "password"}
-                  helperText={error.passwordError ? "Incorrect password." : ""}
                   required
-                  fullWidth
                   name="password"
                   label="Password"
                   type="password"
                   autoComplete="new-password"
+
+                  error={Boolean(errors.password?.message)}
+                  helperText={errors.password?.message}
+                  fullWidth
+                  {...register('password', { required: 'укажите пароль' })}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -235,8 +148,8 @@ export default function SignUp() {
               Sign Up
             </Button>
             <Grid container justifyContent="flex-end">
-              <Grid item onClick={quit}>
-                <Link to="/sign-in" variant="body2">
+              <Grid item >
+                <Link to="/login" variant="body2">
                   Already have an account? Sign in
                 </Link>
               </Grid>

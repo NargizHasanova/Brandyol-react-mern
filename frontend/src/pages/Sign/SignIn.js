@@ -16,10 +16,10 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { checkUser, fetchUsersData } from '../../redux/userSlice';
+import { checkUser, fetchLogin, fetchUsersData } from '../../redux/userSlice';
 import { useEffect } from 'react';
 import { useState } from 'react';
-
+import { useForm } from 'react-hook-form'
 
 function Copyright(props) {
   return (
@@ -37,75 +37,41 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignIn() {
+  const { isAuthorized, user } = useSelector((state) => state.users)
   const dispatch = useDispatch()
-  const users = useSelector(state => state.users)
   const navigate = useNavigate()
-  const [userEmail, setUserEmail] = useState("");
-  const [userPassword, setUserPassword] = useState("");
-  const [userEmailError, setUserEmailError] = useState(false);
-  const [userPasswordError, setUserPasswordError] = useState(false);
+  console.log({ isAuthorized })
+
 
   useEffect(() => {
-    if (!userEmail.includes('@')) {
-      setUserEmailError(true)
+    if (user) {
+      navigate("/")
     }
-    if (userEmail.includes('@') || userEmail.trim().length === 0) {
-      setUserEmailError(false)
+  }, [isAuthorized]);
+
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isValid },
+  } = useForm({
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+    mode: 'onChange',
+  })
+
+  const onSubmit = async (data) => {
+    const res = await dispatch(fetchLogin(data))
+    console.log(res.payload)
+    if (!res.payload) {
+      return alert('ne udalos avtorizovatsa')
     }
-    if (userPassword.trim().length < 4) {
-      setUserPasswordError(true)
+    if ('token' in res.payload) {
+      window.localStorage.setItem('token', res.payload.token)
     }
-    if (userPassword.trim().length >= 4 || userPassword.trim().length === 0) {
-      setUserPasswordError(false)
-    }
-  }, [userEmail, userPassword]);
-
-  useEffect(() => {
-   if(users.signedIn) {
-    navigate("/")
-   }
-  }, [users.signedIn]);
-
-
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (
-      userEmailError ||
-      userEmail.trim().length === 0
-    ) {
-      setUserEmailError(true)
-      return
-    }
-    if (userPasswordError ||
-      userPassword.trim().length === 0
-    ) {
-      setUserPasswordError(true)
-      return
-    }
-    const data = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-
-    const signInData = {
-      email: data.get('email'),
-      password: data.get('password'),
-    }
-    await dispatch(fetchUsersData(signInData))
-    await dispatch(checkUser(signInData))
-    // console.log(users.signedIn);
-    // users.signedIn && navigate("/")
-  };
-
-
-  console.log(users.data);
-  // useEffect(() => {
-  //   users.signedIn && navigate("/")
-  // }, [users.signedIn]);
-
+  }
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
@@ -124,43 +90,43 @@ export default function SignIn() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-            {users.signedIn === false &&
+          <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1 }}>
+            {isAuthorized === false &&
               <Alert severity="error">Wrong email/password. <br />Please try again or
-                <Link to="/sign-up" > create a new account.</Link>
+                <Link to="/register" > create a new account.</Link>
               </Alert>}
 
             <TextField
-              value={userEmail}
-              onChange={(e) => setUserEmail(e.target.value)}
-              error={userEmailError}
-              id={userEmailError ? "outlined-error-helper-text" : "email"}
               margin="normal"
               required
-              fullWidth
               label="Email Address"
               name="email"
               autoComplete="email"
               autoFocus
+              error={Boolean(errors.email?.message)}
+              helperText={errors.email?.message}
+              type="email"
+              fullWidth
+              {...register('email', { required: 'enter your email' })}
             />
             <TextField
-              value={userPassword}
-              onChange={(e) => setUserPassword(e.target.value)}
-              error={userPasswordError}
-              id={userPasswordError ? "outlined-error-helper-text" : "password"}
+              error={Boolean(errors.email?.message)}
+              helperText={errors.password?.message}
+              type="password"
+              fullWidth
               margin="normal"
               required
-              fullWidth
               name="password"
               label="Password"
-              type="password"
               autoComplete="current-password"
+              {...register('password', { required: 'укажите пароль' })}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
             <Button
+              disabled={!isValid}
               type="submit"
               fullWidth
               variant="contained"
@@ -175,7 +141,7 @@ export default function SignIn() {
                 </Link>
               </Grid>
               <Grid item>
-                <Link to="/sign-up" >
+                <Link to="/register" >
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>

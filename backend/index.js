@@ -42,15 +42,14 @@ app.post("/upload", checkAuth, upload.single("file"), (req, res) => {
 });
 
 // AUTH
-app.get("/auth/me", checkAuth, getMe)
 app.post("/auth/login", loginValidation, handleValidationErrors, login)
 app.post("/auth/register", registerValidation, handleValidationErrors, register)
+app.get("/auth/me", checkAuth, getMe)
 
 // PRODUCTS
 app.get("/products", getAllProducts)
 app.get("/products/:id", getSingleProduct)
 app.get("/categories", getAllCategories)
-// app.get("/category", getFilteredProducts)
 app.get("/brands", getAllBrands)
 app.get("/genders", getAllGenders)
 app.get("/prices", getAllPrices)

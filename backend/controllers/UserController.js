@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import UserModel from '../models/User.js';// obazatelno propisivat .js v konce tak kak eto import moduley
-
+import UserModel from '../models/User.js';
 
 // REGISTER
 export const register = async (req, res) => {
@@ -10,8 +9,8 @@ export const register = async (req, res) => {
 
         const doc = new UserModel({
             email: req.body.email,
-            fullName: req.body.fullName,
-            avatarUrl: req.body.avatarUrl,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
             password: await bcrypt.hash(req.body.password, salt)
         });
 
@@ -47,6 +46,7 @@ export const login = async (req, res) => {
         const user = await UserModel.findOne({ email: req.body.email });
 
         if (!user) {
+            console.log('!user');
             return res.status(404).json({
                 message: 'Пользователь не найден',
             });
@@ -55,6 +55,7 @@ export const login = async (req, res) => {
         const isValidPass = await bcrypt.compare(req.body.password, user.password);
 
         if (!isValidPass) {
+            console.log('!isValidPass');
             return res.status(400).json({
                 message: 'Неверный логин или пароль',
             });
@@ -71,14 +72,13 @@ export const login = async (req, res) => {
         );
 
         const { passwordHash, ...userData } = user._doc;
-
-        res.json({
+        return res.json({
             ...userData,
             token,
         });
     } catch (err) {
         console.log(err);
-        res.status(500).json(err.message);
+        return res.status(500).json(err.message);
     }
 };
 
