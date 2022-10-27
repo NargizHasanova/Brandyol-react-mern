@@ -194,12 +194,15 @@ export const getSingleProduct = async (req, res) => {
     }
 }
 
-// CHANGE SINGLE POST
+// EDIT PRODUCT
 export const editProduct = async (req, res) => {
     try {
-        const updatedProduct = await ProductModel.findByIdAndUpdate(req.params.id, {
-            $set: req.body
-        }, { new: true })
+        const updatedProduct = await ProductModel
+            .findByIdAndUpdate(req.params.id, {
+                $set: req.body
+            }, { new: true })
+            .populate('user')
+            .exec()
 
         return res.status(200).json(updatedProduct)
     } catch (err) {

@@ -18,8 +18,11 @@ const UserSchema = new Schema({
         type: String,
         required: true,
     },
+    favorite: {
+        type: [{ ref: "Product", type: Schema.Types.ObjectId }],
+        default: []
+    },
     avatarUrl: String,
-
 },
     {
         timestamps: true

@@ -38,10 +38,10 @@ const ProductSchema = new mongoose.Schema(
             type: Number,
             default: 1
         },
-        favorite: {
-            type: Boolean,
-            default: false
-        },
+        // favorite: {
+        //     type: Boolean,
+        //     default: false
+        // },
         images: {
             type: Array,
             required: true
