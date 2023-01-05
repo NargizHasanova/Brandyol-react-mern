@@ -10,7 +10,7 @@ import Checkbox from '@mui/material/Checkbox';
 // import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import { LockOutlined, TrendingUpOutlined } from '@material-ui/icons';
+import { LockOutlined } from '@material-ui/icons';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -48,6 +48,8 @@ export default function SignIn() {
       navigate("/")
     }
   }, [isAuthorized]);
+
+  console.log(user);
 
   const {
     register,

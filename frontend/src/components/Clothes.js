@@ -3,18 +3,34 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router';
 import WaitingGif from './WaitingGif'
 import { useDispatch, useSelector } from "react-redux";
-import {  changeIsFav, showMoreClothesItems, showLessClothesItems } from "../redux/clothesSlice";
+import { changeIsFav, showMoreClothesItems, showLessClothesItems, likeProduct } from "../redux/clothesSlice";
 import { Axios } from "../servicesAPI";
+import Favorites from './../pages/Favorites/index';
+import { fetchMe } from "../redux/userSlice";
 
 export default function Clothes() {
     const dispatch = useDispatch()
     const clothes = useSelector(state => state.clothes)
+    const { user } = useSelector((state) => state.users)
     const [homePageClothes, setHomePageClothes] = useState([])
+    const [favs, setFavs] = useState(user?.favorites) //bunu isle
     const navigate = useNavigate();
-    //setHomePageClothes -a getdata birbasa dusmurdu deye useeffect yaratdim
+    console.log(user?.favorites); // like edende bu deyismir
+    console.log(clothes?.favoriteBox); // like edende bu deyisir
+    // console.log(clothes.favoriteBox); yenilenmis favoriteBox burdadi
+    const hasLiked = (item) => user?.favorites.some(({ _id }) => _id === item._id)
+
+    // setHomePageClothes -a getdata birbasa dusmurdu deye useeffect yaratdim
     useEffect(() => {
         setHomePageClothes(clothes.data?.slice(0, clothes.numOfItem))
     }, [clothes.data, clothes.numOfItem]);
+
+    // useEffect(() => {
+    //     if (user) {
+    //         console.log(user);
+    //         setFavs(user.favorites)
+    //     }
+    // }, [user]);
 
     function itemInfo(item) {
         navigate(`/product_item/${item._id}`)
@@ -26,25 +42,15 @@ export default function Clothes() {
     function showLessFoo() {
         dispatch(showLessClothesItems())
     }
+    // useEffect(() => {
+    //     dispatch(fetchMe())
+    // }, [clothes.favoriteBox])
 
-    async function changeFavorites(singleItem) {
-        dispatch(changeIsFav(singleItem._id))
-        await Axios.put(`/editProduct/${singleItem._id}`, {
-            category: singleItem.category,
-            brand: singleItem.brand,
-            gender: singleItem.gender,
-            name: singleItem.name,
-            desc: singleItem.desc,
-            price: singleItem.price,
-            selected: singleItem.selected,
-            images: singleItem.images,
-            size: singleItem.size,
-            color: singleItem.color,
-            count: singleItem.count,
-            favorite: !singleItem.favorite
-        })
+
+    async function handleLike(product, userId) {
+       await dispatch(likeProduct({ product, userId }))
+        dispatch(fetchMe())
     }
-
 
     return (
         <section className="clothes-home">
@@ -54,7 +60,7 @@ export default function Clothes() {
                     {clothes.pending && <WaitingGif />}
                     {clothes.error === true && <h1>something went wrong</h1>}
                     {!clothes.pending && homePageClothes?.map(item => {
-                        const { _id, images, name, price, category, brand, desc, favorite } = item
+                        const { _id, images, name, price, category, brand, desc } = item
                         return (
                             <div key={_id} className="clothes__item">
                                 <div className="clothes__img">
@@ -66,14 +72,13 @@ export default function Clothes() {
                                                 <i onClick={() => itemInfo(item)}
                                                     className="far fa-search">
                                                 </i>
-                                                {!favorite &&
-                                                    <i onClick={() => changeFavorites(item)}
-                                                        className="fas fa-heart">
-                                                    </i>}
-                                                {favorite &&
-                                                    <i onClick={() => changeFavorites(item)}
-                                                        className="filled-heart"><FaHeart />
-                                                    </i>}
+
+                                                <i onClick={() => handleLike(item, user._id)}
+                                                    className={hasLiked(item)
+                                                        ? "filled-heart"
+                                                        : "fas fa-heart"}>
+                                                    {hasLiked(item) ? <FaHeart /> : ""}
+                                                </i>
                                             </div>
                                         </div>
                                     </div>

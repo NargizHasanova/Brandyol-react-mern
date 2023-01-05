@@ -57,7 +57,7 @@ export default function HeaderTop() {
                     {isAuthorized &&
                         <ul className='login-dropdown'>
                             <Link to="/">
-                                <span className='mail'>{user.email}</span>
+                                <span className='mail'>{user?.email}</span>
                             </Link>
                             <Link to="/">
                                 <AiOutlineBook />

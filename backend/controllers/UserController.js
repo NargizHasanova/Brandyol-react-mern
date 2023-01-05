@@ -11,7 +11,8 @@ export const register = async (req, res) => {
             email: req.body.email,
             firstName: req.body.firstName,
             lastName: req.body.lastName,
-            password: await bcrypt.hash(req.body.password, salt)
+            password: await bcrypt.hash(req.body.password, salt),
+            avatarUrl: req.body.avatarUrl,
         });
 
         const user = await doc.save();

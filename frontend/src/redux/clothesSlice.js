@@ -42,6 +42,13 @@ export const fetchHotSales = createAsyncThunk("sales/fetchHotSales",
         return data
     }
 )
+export const likeProduct = createAsyncThunk("products/fetchLikes",
+    async ({ userId, product }) => { // params = { userId, product }
+        const { data } = await Axios.post(`/addFav/${userId}`, product)
+        // console.log(data); // User with updated favorites array
+        return data
+    }
+)
 
 export const fetchFilteredProducts = createAsyncThunk("search/fetchFilteredProducts",
     async ({ category: cat, brand, gender, minPrice, maxPrice }) => {
@@ -274,19 +281,22 @@ export const clothesSlice = createSlice({
         changeSingleProductFav: (state, { payload }) => {
             state.singleProduct.favorite = !state.singleProduct.favorite
         },
-        changeIsFav: (state, { payload }) => {
-            state.data.map(item => {
-                if (item._id === payload) {
-                    item.favorite = !item.favorite
-                }
-                return item
-            })
-            state.productsPageClothes.map(item => {
-                if (item._id === payload) {
-                    item.favorite = !item.favorite
-                }
-                return item
-            })
+        // changeIsFav: (state, { payload }) => {
+        //     state.data.map(item => {
+        //         if (item._id === payload) {
+        //             item.favorite = !item.favorite
+        //         }
+        //         return item
+        //     })
+        //     state.productsPageClothes.map(item => {
+        //         if (item._id === payload) {
+        //             item.favorite = !item.favorite
+        //         }
+        //         return item
+        //     })
+        // },
+        changeIsFav: (state, { payload }) => { // payload = product
+            // state.favoriteBox = [...state.favoriteBox, payload]
         },
         showBar: (state) => {
             state.filterBarIsVisible = true
@@ -350,11 +360,18 @@ export const clothesSlice = createSlice({
         [fetchHotSales.fulfilled]: (state, { payload }) => {
             state.hotSalesData = payload
         },
+        [likeProduct.fulfilled]: (state, { payload }) => {
+            state.favoriteBox = payload.favorites
+        },
+        [likeProduct.rejected]: (state, action) => {
+            console.log(action.error);
+            state.error = action.error.message
+        },
     }
 })
 
 
-export const { showMoreClothesItems, showLessClothesItems, removeFromBasket, addToBasket, increaseProductItemCount, decreaseProductItemCount, setProductItemSize, showBar, hideBar, changeIsFav, setProductItemColor, selectBrands, checkSelectedBrands, resetSelectedGenders, resetSelectedBrands, selectGenders, checkSelectedGenders, checkSelectedPrices, selectPrices, resetFilters, setSingleProduct, setProductColor, setProductSize,changeSingleProductFav } = clothesSlice.actions
+export const { showMoreClothesItems, showLessClothesItems, removeFromBasket, addToBasket, increaseProductItemCount, decreaseProductItemCount, setProductItemSize, showBar, hideBar, changeIsFav, setProductItemColor, selectBrands, checkSelectedBrands, resetSelectedGenders, resetSelectedBrands, selectGenders, checkSelectedGenders, checkSelectedPrices, selectPrices, resetFilters, setSingleProduct, setProductColor, setProductSize, changeSingleProductFav } = clothesSlice.actions
 
 export default clothesSlice.reducer
 

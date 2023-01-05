@@ -7,7 +7,7 @@ import fs from 'fs';
 import dotenv from 'dotenv'
 import { getMe, login, register } from "./controllers/UserController.js";
 import { loginValidation, registerValidation } from "./validations.js";
-import { editProduct, getAllBrands, getAllCategories, getAllGenders, getAllHotSales, getAllPrices, getAllProducts, getSingleProduct, searchByQueryType } from "./controllers/ProductController.js";
+import { addToFavorites, getAllBrands, getAllCategories, getAllGenders, getAllHotSales, getAllPrices, getAllProducts, getSingleProduct, searchByQueryType } from "./controllers/ProductController.js";
 import handleValidationErrors from "./middleware/handleValidationErrors.js";
 
 
@@ -55,7 +55,8 @@ app.get("/genders", getAllGenders)
 app.get("/prices", getAllPrices)
 app.get("/hotSales", getAllHotSales)
 app.get("/search", searchByQueryType)
-app.put("/editProduct/:id", editProduct) // shoud work on "pay now" click
+app.post("/addFav/:userId", addToFavorites)
+// app.patch("/editProduct/:id", updatePost) // shoud work on "pay now" click
 
 app.listen(process.env.PORT || 4444, (err) => {
     if (err) {

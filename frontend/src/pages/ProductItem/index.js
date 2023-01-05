@@ -10,7 +10,7 @@ import 'antd/dist/antd.css';
 import sizeChart from '../../assets/images/size-chart.jpg'
 import { useMediaQuery } from 'react-responsive'
 import { useSelector, useDispatch } from 'react-redux';
-import { increaseProductItemCount, decreaseProductItemCount, setSingleProduct, setProductColor, setProductSize, changeIsFav, removeFromFavBox, addToFavBox, fetchFilteredProducts, resetFilters, fetchClothesData, changeSingleProductFav } from '../../redux/clothesSlice';
+import { increaseProductItemCount, decreaseProductItemCount, setSingleProduct, setProductColor, setProductSize, changeIsFav, removeFromFavBox, addToFavBox, fetchFilteredProducts, resetFilters, fetchClothesData, changeSingleProductFav, likeProduct } from '../../redux/clothesSlice';
 
 // Import Swiper styles
 import "swiper/css";
@@ -30,6 +30,7 @@ const content = (
     </div>
 );
 
+
 export default function ProductItem({
     src,
     width,
@@ -38,10 +39,17 @@ export default function ProductItem({
     magnifieWidth = 300,
     zoomLevel = 1.7
 }) {
+
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const { singleProduct } = useSelector(state => state.clothes)
+    const { singleProduct, favoriteBox } = useSelector(state => state.clothes)
+    const { user } = useSelector((state) => state.users)
     const { id: productId } = useParams()
+    const liked = favoriteBox?.some(({ _id }) => _id === productId)
+
+    const [hasLiked, setHasLiked] = useState(liked)
+
+
 
 
     useEffect(() => {
@@ -51,6 +59,12 @@ export default function ProductItem({
                 .catch(err => console.log(err))
         }
     }, []);
+    // useEffect(() => {
+    //     if (user) {
+    //         console.log(user);
+    //         setFavs(user.favorites)
+    //     }
+    // }, [user]);
 
     const [thumbsSwiper, setThumbsSwiper] = useState(null);
     //zoom image on hover
@@ -74,24 +88,11 @@ export default function ProductItem({
         dispatch(setProductSize(size))
     }
 
-    
-    async function changeFavorites() {
-        dispatch(changeIsFav(singleProduct._id))
-        await Axios.put(`/editProduct/${singleProduct._id}`, {
-            category: singleProduct.category,
-            brand: singleProduct.brand,
-            gender: singleProduct.gender,
-            name: singleProduct.name,
-            desc: singleProduct.desc,
-            price: singleProduct.price,
-            selected: singleProduct.selected,
-            images: singleProduct.images,
-            size: singleProduct.size,
-            color: singleProduct.color,
-            count: singleProduct.count,
-            favorite: !singleProduct.favorite
-        })
-        dispatch(changeSingleProductFav())
+
+    async function changeFavorites(singleProduct, userId) {
+        console.log(singleProduct,userId);
+        dispatch(likeProduct({ singleProduct, userId }))
+        setHasLiked(!hasLiked)
     }
 
     function selectCategory(category) {
@@ -507,15 +508,15 @@ export default function ProductItem({
                     </ul>
                     <div className="vishList">
                         <span className='vishlist-span'>
-                            {!singleProduct.favorite ?
-                                <span
+                            {!hasLiked
+                                ? <span
                                     className='vishlist-span-inner'
-                                    onClick={changeFavorites}>
+                                    onClick={() => changeFavorites(singleProduct, user._id)}>
                                     <i className="far fa-heart"></i>Add to Wishlist
                                 </span>
                                 : <span
                                     className='fontawesome-span'
-                                    onClick={changeFavorites}>
+                                    onClick={() => changeFavorites(singleProduct, user._id)}>
                                     <i className='colored-heart'>
                                         <FontAwesomeIcon icon={faHeart} />
                                     </i>Added to Wishlist

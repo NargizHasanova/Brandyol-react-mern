@@ -4,6 +4,7 @@ import BrandModel from '../models/Brand.js'
 import GenderModel from '../models/Gender.js'
 import PriceModel from '../models/Price.js'
 import HotsalesModel from '../models/Hotsales.js'
+import UserModel from '../models/User.js'
 
 //GET ALL PRODUCTS
 export const getAllProducts = async (req, res) => {
@@ -209,3 +210,84 @@ export const editProduct = async (req, res) => {
         return res.status(500).json(err.message)
     }
 }
+
+//ADD TO FAV
+export const addToFavorites = async (req, res) => {
+    try {
+        const { userId } = req.params
+        const user = await UserModel.findById(userId)
+        console.log(user.favorites);
+        // likes is array of strings
+        const index = user.favorites.findIndex((product) => {
+            // console.log(product._id) //undefined
+            // console.log(req.body)
+            return product._id === String(req.body._id) //product._id
+        }); // or just req.body
+        if (index === -1) { // yeni postu bu id-de olan wexs like etmeyib
+            // like the post
+            console.log('like post');
+            user.favorites.push(req.body);
+        } else {
+            // dislike the post
+            console.log('dislike post');
+            user.favorites = user.favorites.filter((product) => product._id !== req.body._id);
+        }
+
+        const updatedFavList = await UserModel.findByIdAndUpdate(
+            userId,
+            user,
+            { new: true }
+        );
+        res.status(200).json(updatedFavList);
+
+    } catch (err) {
+        console.log(req.params.userId);
+        res.status(404).json({ message: err })
+    }
+    // try {
+    //     const userId = req.params.id
+    //     const updatedProduct = await UserModel
+    //         .findByIdAndUpdate(userId,
+    //             {
+    //                 favorites: req.body.favorites,
+    //             },
+    //             { new: true })
+
+    //     return res.status(200).json(updatedProduct)
+    // } catch (err) {
+    //     return res.status(500).json(err.message)
+    // }
+}
+
+// export const updatePost = async (req, res) => {
+//     try {
+//         const postId = req.params.id
+
+//         const updatedPost = await UserModel.findByIdAndUpdate(
+//             postId,
+//             [
+//                 {
+//                     $set: {
+//                         favorites: {
+//                             $cond: {
+//                                 if: {
+//                                     $in: [postId, "$favorite"]
+//                                 },
+//                                 then: {
+//                                     $setDifference: ["$favorite", [postId]]
+//                                 },
+//                                 else: {
+//                                     $concatArrays: ["$favorite", [postId]]
+//                                 }
+//                             }
+//                         }
+//                     }
+//                 }
+//             ],
+//             { new: true }
+//         )
+//         return res.json(updatedPost)
+//     } catch (err) {
+//         return res.json(err)
+//     }
+// }
