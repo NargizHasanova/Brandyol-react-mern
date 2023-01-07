@@ -66,8 +66,7 @@ export default function SignIn() {
 
   const onSubmit = async (data) => {
     const res = await dispatch(fetchLogin(data))
-    console.log(res.payload)
-    if (!res.payload) {
+    if (!res.payload ) {
       return alert('ne udalos avtorizovatsa')
     }
     if ('token' in res.payload) {

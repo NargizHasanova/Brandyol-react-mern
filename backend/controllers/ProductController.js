@@ -216,13 +216,10 @@ export const addToFavorites = async (req, res) => {
     try {
         const { userId } = req.params
         const user = await UserModel.findById(userId)
-        console.log(user.favorites);
-        // likes is array of strings
+        // likes is array of products
         const index = user.favorites.findIndex((product) => {
-            // console.log(product._id) //undefined
-            // console.log(req.body)
             return product._id === String(req.body._id) //product._id
-        }); // or just req.body
+        }); 
         if (index === -1) { // yeni postu bu id-de olan wexs like etmeyib
             // like the post
             console.log('like post');
@@ -244,50 +241,4 @@ export const addToFavorites = async (req, res) => {
         console.log(req.params.userId);
         res.status(404).json({ message: err })
     }
-    // try {
-    //     const userId = req.params.id
-    //     const updatedProduct = await UserModel
-    //         .findByIdAndUpdate(userId,
-    //             {
-    //                 favorites: req.body.favorites,
-    //             },
-    //             { new: true })
-
-    //     return res.status(200).json(updatedProduct)
-    // } catch (err) {
-    //     return res.status(500).json(err.message)
-    // }
 }
-
-// export const updatePost = async (req, res) => {
-//     try {
-//         const postId = req.params.id
-
-//         const updatedPost = await UserModel.findByIdAndUpdate(
-//             postId,
-//             [
-//                 {
-//                     $set: {
-//                         favorites: {
-//                             $cond: {
-//                                 if: {
-//                                     $in: [postId, "$favorite"]
-//                                 },
-//                                 then: {
-//                                     $setDifference: ["$favorite", [postId]]
-//                                 },
-//                                 else: {
-//                                     $concatArrays: ["$favorite", [postId]]
-//                                 }
-//                             }
-//                         }
-//                     }
-//                 }
-//             ],
-//             { new: true }
-//         )
-//         return res.json(updatedPost)
-//     } catch (err) {
-//         return res.json(err)
-//     }
-// }

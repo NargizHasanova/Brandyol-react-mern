@@ -6,6 +6,7 @@ const Axios = axios.create({
 
 Axios.interceptors.request.use((config) => {
     config.headers.Authorization = window.localStorage.getItem('token')
+    // nastroy headers.Authorization = token ve bakende otur
     return config
 })
 

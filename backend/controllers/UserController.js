@@ -87,7 +87,8 @@ export const login = async (req, res) => {
 // GET ME
 export const getMe = async (req, res) => {
     try {
-        const user = await UserModel.findById(req.userId)//  req.userId = decoded._id
+        const user = await UserModel.findById(req.userId)
+        //  req.userId = checkAuth-dan gelen tokene gore userModelin(userin) _id-si
 
         if (!user) {
             return res.status(404).json({

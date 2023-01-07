@@ -3,34 +3,25 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router';
 import WaitingGif from './WaitingGif'
 import { useDispatch, useSelector } from "react-redux";
-import { changeIsFav, showMoreClothesItems, showLessClothesItems, likeProduct } from "../redux/clothesSlice";
+import { changeIsFav, showMoreClothesItems, showLessClothesItems } from "../redux/clothesSlice";
 import { Axios } from "../servicesAPI";
 import Favorites from './../pages/Favorites/index';
-import { fetchMe } from "../redux/userSlice";
+import { fetchMe, handleFavs, likeProduct } from "../redux/userSlice";
 
 export default function Clothes() {
     const dispatch = useDispatch()
     const clothes = useSelector(state => state.clothes)
-    const { user } = useSelector((state) => state.users)
+    const { user, favoriteBox } = useSelector((state) => state.users)
     const [homePageClothes, setHomePageClothes] = useState([])
-    const [favs, setFavs] = useState(user?.favorites) //bunu isle
+    // const [liked, setLiked] = useState(hasLiked) //bunu isle
     const navigate = useNavigate();
-    console.log(user?.favorites); // like edende bu deyismir
-    console.log(clothes?.favoriteBox); // like edende bu deyisir
-    // console.log(clothes.favoriteBox); yenilenmis favoriteBox burdadi
-    const hasLiked = (item) => user?.favorites.some(({ _id }) => _id === item._id)
+    // console.log(favoriteBox); yenilenmis favoriteBox burdadi
+    const hasLiked = (item) => favoriteBox?.some(({ _id }) => _id === item._id)
 
     // setHomePageClothes -a getdata birbasa dusmurdu deye useeffect yaratdim
     useEffect(() => {
         setHomePageClothes(clothes.data?.slice(0, clothes.numOfItem))
     }, [clothes.data, clothes.numOfItem]);
-
-    // useEffect(() => {
-    //     if (user) {
-    //         console.log(user);
-    //         setFavs(user.favorites)
-    //     }
-    // }, [user]);
 
     function itemInfo(item) {
         navigate(`/product_item/${item._id}`)
@@ -42,15 +33,14 @@ export default function Clothes() {
     function showLessFoo() {
         dispatch(showLessClothesItems())
     }
-    // useEffect(() => {
-    //     dispatch(fetchMe())
-    // }, [clothes.favoriteBox])
 
-
-    async function handleLike(product, userId) {
-       await dispatch(likeProduct({ product, userId }))
+    async function handleLike(product, userId, hasLiked) {
+        await dispatch(likeProduct({ product, userId })) // await coxda geseng isleyir!
         dispatch(fetchMe())
+        // dispatch(handleFavs({ product, hasLiked }))
     }
+    console.log(favoriteBox)
+
 
     return (
         <section className="clothes-home">
@@ -73,7 +63,7 @@ export default function Clothes() {
                                                     className="far fa-search">
                                                 </i>
 
-                                                <i onClick={() => handleLike(item, user._id)}
+                                                <i onClick={() => handleLike(item, user?._id, hasLiked(item))}
                                                     className={hasLiked(item)
                                                         ? "filled-heart"
                                                         : "fas fa-heart"}>

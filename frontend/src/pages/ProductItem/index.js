@@ -10,7 +10,7 @@ import 'antd/dist/antd.css';
 import sizeChart from '../../assets/images/size-chart.jpg'
 import { useMediaQuery } from 'react-responsive'
 import { useSelector, useDispatch } from 'react-redux';
-import { increaseProductItemCount, decreaseProductItemCount, setSingleProduct, setProductColor, setProductSize, changeIsFav, removeFromFavBox, addToFavBox, fetchFilteredProducts, resetFilters, fetchClothesData, changeSingleProductFav, likeProduct } from '../../redux/clothesSlice';
+import { increaseProductItemCount, decreaseProductItemCount, setSingleProduct, setProductColor, setProductSize, changeIsFav, removeFromFavBox, addToFavBox, fetchFilteredProducts, resetFilters, fetchClothesData, changeSingleProductFav } from '../../redux/clothesSlice';
 
 // Import Swiper styles
 import "swiper/css";
@@ -20,6 +20,7 @@ import "swiper/css/thumbs";
 // import Swiper core and required modules
 import SwiperCore, { FreeMode, Navigation, Thumbs } from 'swiper';
 import { Axios } from '../../servicesAPI';
+import { likeProduct } from '../../redux/userSlice';
 
 // install Swiper modules
 SwiperCore.use([FreeMode, Navigation, Thumbs]);
@@ -90,7 +91,6 @@ export default function ProductItem({
 
 
     async function changeFavorites(singleProduct, userId) {
-        console.log(singleProduct,userId);
         dispatch(likeProduct({ singleProduct, userId }))
         setHasLiked(!hasLiked)
     }

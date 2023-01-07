@@ -5,52 +5,31 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Axios } from '../../servicesAPI';
 import { useEffect } from 'react';
 import { useState } from 'react';
+import { fetchMe, handleFavs, likeProduct } from '../../redux/userSlice';
 
 export default function Favorites() {
     const dispatch = useDispatch()
     const { pending } = useSelector(state => state.clothes)
-    const { user } = useSelector((state) => state.users)
-    const { favoriteBox } = useSelector(state => state.clothes)
-    const [favorites, setFavorites] = useState([])
-    const [refetch, setRefetch] = useState(false)
+    const { user, favoriteBox } = useSelector((state) => state.users)
     const navigate = useNavigate();
-    console.log(user.favorites);
-    const hasLiked = (item) => favoriteBox.some(({ _id }) => _id === item._id)
+    const hasLiked = (item) => favoriteBox?.some(({ _id }) => _id === item._id)
 
-    // useEffect(() => {
-    //     (async () => {
-    //         const { data } = await Axios.get("/products")
-    //         setFavorites(data.filter(item => item.favorite === true))
-    //     })()
-    // }, [refetch]);
 
     function itemInfo(item) {
         navigate(`/product_item/${item._id}`)
     }
 
-    async function removeFromFavorites(singleItem) {
-
-        // await Axios.put(`/editProduct/${singleItem._id}`, {
-        //     category: singleItem.category,
-        //     brand: singleItem.brand,
-        //     gender: singleItem.gender,
-        //     name: singleItem.name,
-        //     desc: singleItem.desc,
-        //     price: singleItem.price,
-        //     selected: singleItem.selected,
-        //     images: singleItem.images,
-        //     size: singleItem.size,
-        //     color: singleItem.color,
-        //     count: singleItem.count,
-        //     favorite: !singleItem.favorite
-        // })
-        // setRefetch(prev => !prev)
+    async function removeFromFavorites(product, userId, hasLiked) { // hasLiked = true/false
+        console.log(userId);
+        await dispatch(likeProduct({ product, userId })) // await coxda geseng isleyir!
+        // dispatch(handleFavs({ product, hasLiked }))
+        dispatch(fetchMe())
     }
 
     return (
         <section className="clothes-home clothes-home-favorites">
             {pending && <WaitingGif />}
-            {!pending && favoriteBox.length > 0 ?
+            {favoriteBox.length > 0 ?
                 <div className="container">
                     <h1 className="title">Favorites List</h1>
                     <div className="clothes clothes-favorite">
@@ -69,7 +48,7 @@ export default function Favorites() {
                                                         className="far fa-search">
                                                     </i>
                                                     <i
-                                                        onClick={() => removeFromFavorites(item)} className="filled-heart">
+                                                        onClick={() => removeFromFavorites(item, user?._id, hasLiked(item))} className="filled-heart">
                                                         <FaHeart />
                                                     </i>
                                                 </div>

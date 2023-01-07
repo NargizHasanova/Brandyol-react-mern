@@ -18,7 +18,10 @@ const UserSchema = new Schema({
         type: String,
         required: true,
     },
-    favorites: [], // String = post id's
+    favorites: {
+        type: Array,
+        default: []
+    }, // String = post id's
     // add to fav klik zamani already favdisa silirik arraydan,deyise elave edirik arraye
     avatarUrl: String,
 },
