@@ -10,7 +10,7 @@ import 'antd/dist/antd.css';
 import sizeChart from '../../assets/images/size-chart.jpg'
 import { useMediaQuery } from 'react-responsive'
 import { useSelector, useDispatch } from 'react-redux';
-import { increaseProductItemCount, decreaseProductItemCount, setSingleProduct, setProductColor, setProductSize, changeIsFav, removeFromFavBox, addToFavBox, fetchFilteredProducts, resetFilters, fetchClothesData, changeSingleProductFav } from '../../redux/clothesSlice';
+import { increaseProductItemCount, decreaseProductItemCount, setSingleProduct, setProductColor, setProductSize, fetchFilteredProducts, resetFilters } from '../../redux/clothesSlice';
 
 // Import Swiper styles
 import "swiper/css";
@@ -20,7 +20,7 @@ import "swiper/css/thumbs";
 // import Swiper core and required modules
 import SwiperCore, { FreeMode, Navigation, Thumbs } from 'swiper';
 import { Axios } from '../../servicesAPI';
-import { likeProduct } from '../../redux/userSlice';
+import { fetchMe, likeProduct } from '../../redux/userSlice';
 
 // install Swiper modules
 SwiperCore.use([FreeMode, Navigation, Thumbs]);
@@ -30,7 +30,6 @@ const content = (
         <img src={sizeChart} alt={sizeChart} />
     </div>
 );
-
 
 export default function ProductItem({
     src,
@@ -43,15 +42,14 @@ export default function ProductItem({
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const { singleProduct, favoriteBox } = useSelector(state => state.clothes)
-    const { user } = useSelector((state) => state.users)
+    const { singleProduct } = useSelector(state => state.clothes)
+    const { user, favoriteBox } = useSelector((state) => state.users)
     const { id: productId } = useParams()
     const liked = favoriteBox?.some(({ _id }) => _id === productId)
-
     const [hasLiked, setHasLiked] = useState(liked)
 
-
-
+    console.log(hasLiked);
+    console.log(favoriteBox);
 
     useEffect(() => {
         if (productId) {
@@ -60,12 +58,6 @@ export default function ProductItem({
                 .catch(err => console.log(err))
         }
     }, []);
-    // useEffect(() => {
-    //     if (user) {
-    //         console.log(user);
-    //         setFavs(user.favorites)
-    //     }
-    // }, [user]);
 
     const [thumbsSwiper, setThumbsSwiper] = useState(null);
     //zoom image on hover
@@ -91,7 +83,8 @@ export default function ProductItem({
 
 
     async function changeFavorites(singleProduct, userId) {
-        dispatch(likeProduct({ singleProduct, userId }))
+        await dispatch(likeProduct({ product: singleProduct, userId }))
+        dispatch(fetchMe())
         setHasLiked(!hasLiked)
     }
 

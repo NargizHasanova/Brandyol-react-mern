@@ -105,8 +105,7 @@ export const userSlice = createSlice({
             state.status = 'loading'
         },
         [likeProduct.fulfilled]: (state, { payload }) => {
-            console.log("mubarekdi");
-            // state.favoriteBox = payload.favorites
+            state.favoriteBox = payload.favorites
         },
         [likeProduct.rejected]: (state, action) => {
             console.log(action.error);

@@ -218,7 +218,7 @@ export const addToFavorites = async (req, res) => {
         const user = await UserModel.findById(userId)
         // likes is array of products
         const index = user.favorites.findIndex((product) => {
-            return product._id === String(req.body._id) //product._id
+            return product._id === req.body._id //product._id
         }); 
         if (index === -1) { // yeni postu bu id-de olan wexs like etmeyib
             // like the post
@@ -239,6 +239,6 @@ export const addToFavorites = async (req, res) => {
 
     } catch (err) {
         console.log(req.params.userId);
-        res.status(404).json({ message: err })
+        res.status(404).json(err)
     }
 }

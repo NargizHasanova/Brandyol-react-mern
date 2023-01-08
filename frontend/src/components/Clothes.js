@@ -34,10 +34,9 @@ export default function Clothes() {
         dispatch(showLessClothesItems())
     }
 
-    async function handleLike(product, userId, hasLiked) {
+    async function handleLike(product, userId) {
         await dispatch(likeProduct({ product, userId })) // await coxda geseng isleyir!
-        dispatch(fetchMe())
-        // dispatch(handleFavs({ product, hasLiked }))
+        dispatch(fetchMe()) // fetchMe yazmayanda userId ikinci handleLikeda niyese undefined qaytarir,cunki user._id [object object] olur
     }
     console.log(favoriteBox)
 
@@ -63,7 +62,7 @@ export default function Clothes() {
                                                     className="far fa-search">
                                                 </i>
 
-                                                <i onClick={() => handleLike(item, user?._id, hasLiked(item))}
+                                                <i onClick={() => handleLike(item, user?._id)}
                                                     className={hasLiked(item)
                                                         ? "filled-heart"
                                                         : "fas fa-heart"}>

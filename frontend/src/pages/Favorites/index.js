@@ -25,6 +25,7 @@ export default function Favorites() {
         // dispatch(handleFavs({ product, hasLiked }))
         dispatch(fetchMe())
     }
+    console.log(favoriteBox +" in favorites page");
 
     return (
         <section className="clothes-home clothes-home-favorites">
