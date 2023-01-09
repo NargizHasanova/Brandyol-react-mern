@@ -40,8 +40,6 @@ export default function SignIn() {
   const { isAuthorized, user } = useSelector((state) => state.users)
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  console.log({ isAuthorized })
-
 
   useEffect(() => {
     if (user) {

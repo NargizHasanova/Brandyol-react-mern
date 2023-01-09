@@ -4,7 +4,6 @@ import { Axios } from "../servicesAPI";
 export const fetchLogin = createAsyncThunk("users/fetchLogin",
     async (params) => {
         const { data } = await Axios.post("/auth/login", params)
-        console.log(data);
         return data
     }
 )
@@ -19,6 +18,7 @@ export const fetchRegister = createAsyncThunk("users/fetchRegister",
 export const fetchMe = createAsyncThunk("users/fetchMe",
     async () => {
         const { data } = await Axios.get("/auth/me")
+        console.log('fetchMe');
         return data // user qayidir
     }
 )
@@ -32,7 +32,7 @@ export const likeProduct = createAsyncThunk("user/fetchLikes",
 
 const initialState = {
     status: 'loading',
-    isAuthorized: false,
+    isAuthorized: null,
     user: null,
     favoriteBox: [],
 }
@@ -42,21 +42,9 @@ export const userSlice = createSlice({
     initialState,
     reducers: {
         logout: (state) => {
-            state.isAuthorized = false
+            state.isAuthorized = null
             window.localStorage.removeItem('token')
         },
-        handleFavs: (state, { payload }) => {
-            console.log(payload);
-            if (payload.hasLiked === true) {
-                state.favoriteBox = state.favoriteBox.filter((item) => item._id !== payload.product._id)
-                console.log('if');
-            } else {
-                console.log('else yeni elave olubur');
-                console.log(payload.product);
-
-                state.favoriteBox = [...state.favoriteBox, payload.product]
-            }
-        }
     },
     extraReducers: {
         [fetchLogin.pending]: (state) => {
@@ -71,6 +59,7 @@ export const userSlice = createSlice({
         [fetchLogin.rejected]: (state, { payload }) => {
             state.status = 'error'
             state.user = null
+            state.isAuthorized = false
         },
         [fetchRegister.pending]: (state) => {
             state.user = null
@@ -84,6 +73,7 @@ export const userSlice = createSlice({
         [fetchRegister.rejected]: (state, { payload }) => {
             state.status = 'error'
             state.user = null
+            state.isAuthorized = false
         },
         [fetchMe.pending]: (state) => {
             state.user = null
@@ -114,6 +104,6 @@ export const userSlice = createSlice({
     }
 })
 
-export const { logout, handleFavs } = userSlice.actions
+export const { logout } = userSlice.actions
 
 export default userSlice.reducer

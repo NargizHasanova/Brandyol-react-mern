@@ -28,6 +28,12 @@ export default function HeaderTop() {
         navigate("/")
     }
 
+    function checkFavs(){
+        if(!user){
+            navigate("/login")
+        }
+    }
+
     return (
         <div className="header_top">
             <div className="header_top-left">
@@ -87,7 +93,7 @@ export default function HeaderTop() {
                     }
 
                 </div>
-                <div className="sign">
+                <div className="sign" onClick={checkFavs}>
                     <Link to="/favorites">
                         <i className="far fa-heart"></i>
                         <span>Favorites</span>

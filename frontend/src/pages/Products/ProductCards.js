@@ -2,38 +2,27 @@ import React from 'react'
 import { useNavigate } from 'react-router';
 import { FaHeart } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
-import { changeIsFav, removeFromFavBox, addToFavBox, fetchClothesData, changeSingleProductFav } from '../../redux/clothesSlice'
 import CardSkeleton from './ProductSkeleton';
-import { useEffect } from 'react';
-import { useState } from 'react';
-import { Axios } from '../../servicesAPI';
+import { fetchMe, likeProduct } from '../../redux/userSlice';
 
 export default function ProductCards() {
     const dispatch = useDispatch()
     const { productsPageClothes, filterBarVisible } = useSelector(state => state.clothes)
+    const users = useSelector((state) => state.users)
+    const hasLiked = (item) => users?.favoriteBox?.some(({ _id }) => _id === item._id)
     const navigate = useNavigate();
 
     function itemInfo(item) {
         navigate(`/product_item/${item._id}`)
     }
 
-    async function changeFavorites(singleProduct) {
-        dispatch(changeIsFav(singleProduct._id))
-        await Axios.put(`/editProduct/${singleProduct._id}`, {
-            category: singleProduct.category,
-            brand: singleProduct.brand,
-            gender: singleProduct.gender,
-            name: singleProduct.name,
-            desc: singleProduct.desc,
-            price: singleProduct.price,
-            selected: singleProduct.selected,
-            images: singleProduct.images,
-            size: singleProduct.size,
-            color: singleProduct.color,
-            count: singleProduct.count,
-            favorite: !singleProduct.favorite
-        })
-        dispatch(changeSingleProductFav())
+    async function handleLike(product, userId) {
+        if(!userId) {
+            navigate("/login")
+            return
+        }
+        await dispatch(likeProduct({ product, userId })) // await coxda geseng isleyir!
+        dispatch(fetchMe()) // fetchMe yazmayanda userId ikinci handleLikeda niyese undefined qaytarir,cunki user._id [object object] olur
     }
 
     return (
@@ -65,10 +54,10 @@ export default function ProductCards() {
                                             <i onClick={() => itemInfo(item)} className="far fa-search"></i>
 
                                             {/* === like === */}
-                                            {!favorite &&
-                                                <i onClick={() => changeFavorites(item)} className="fas fa-heart"></i>}
-                                            {favorite &&
-                                                <i onClick={() => changeFavorites(item)} className="filled-heart"><FaHeart /></i>}
+                                            {!hasLiked(item) &&
+                                                <i onClick={() => handleLike(item, users?.user?._id)} className="fas fa-heart"></i>}
+                                            {hasLiked(item) &&
+                                                <i onClick={() => handleLike(item, users?.user?._id)} className="filled-heart"><FaHeart /></i>}
                                         </div>
                                     </div>
                                 </div>

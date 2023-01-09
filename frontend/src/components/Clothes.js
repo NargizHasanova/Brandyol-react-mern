@@ -3,19 +3,15 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router';
 import WaitingGif from './WaitingGif'
 import { useDispatch, useSelector } from "react-redux";
-import { changeIsFav, showMoreClothesItems, showLessClothesItems } from "../redux/clothesSlice";
-import { Axios } from "../servicesAPI";
-import Favorites from './../pages/Favorites/index';
-import { fetchMe, handleFavs, likeProduct } from "../redux/userSlice";
+import { showMoreClothesItems, showLessClothesItems } from "../redux/clothesSlice";
+import { fetchMe, likeProduct } from "../redux/userSlice";
 
 export default function Clothes() {
     const dispatch = useDispatch()
     const clothes = useSelector(state => state.clothes)
     const { user, favoriteBox } = useSelector((state) => state.users)
     const [homePageClothes, setHomePageClothes] = useState([])
-    // const [liked, setLiked] = useState(hasLiked) //bunu isle
     const navigate = useNavigate();
-    // console.log(favoriteBox); yenilenmis favoriteBox burdadi
     const hasLiked = (item) => favoriteBox?.some(({ _id }) => _id === item._id)
 
     // setHomePageClothes -a getdata birbasa dusmurdu deye useeffect yaratdim
@@ -35,11 +31,14 @@ export default function Clothes() {
     }
 
     async function handleLike(product, userId) {
+        if(!userId) {
+            navigate("/login")
+            return
+        }
         await dispatch(likeProduct({ product, userId })) // await coxda geseng isleyir!
         dispatch(fetchMe()) // fetchMe yazmayanda userId ikinci handleLikeda niyese undefined qaytarir,cunki user._id [object object] olur
     }
     console.log(favoriteBox)
-
 
     return (
         <section className="clothes-home">

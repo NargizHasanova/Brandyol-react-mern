@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router';
 
 export default function Basket() {
     const clothes = useSelector(state => state.clothes)
-    const users = useSelector(state => state.users)
+    const {user} = useSelector(state => state.users)
     const navigate = useNavigate()
 
     const totalCardPrice = clothes.basket.reduce((acc, item) => {
@@ -14,10 +14,8 @@ export default function Basket() {
     }, 0)
 
     function payOrder() {
-        if(users.signedIn === false){
-            navigate("/sign-in")
-        }else{
-            console.log("successfull payment");
+        if(!user){
+            navigate("/login")
         }
     }
 

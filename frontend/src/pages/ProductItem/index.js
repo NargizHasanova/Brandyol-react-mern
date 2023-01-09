@@ -45,8 +45,7 @@ export default function ProductItem({
     const { singleProduct } = useSelector(state => state.clothes)
     const { user, favoriteBox } = useSelector((state) => state.users)
     const { id: productId } = useParams()
-    const liked = favoriteBox?.some(({ _id }) => _id === productId)
-    const [hasLiked, setHasLiked] = useState(liked)
+    const hasLiked = favoriteBox?.some(({ _id }) => _id === productId)
 
     console.log(hasLiked);
     console.log(favoriteBox);
@@ -83,9 +82,13 @@ export default function ProductItem({
 
 
     async function changeFavorites(singleProduct, userId) {
+        console.log(userId);
+        if(!userId) {
+            navigate("/login")
+            return
+        }
         await dispatch(likeProduct({ product: singleProduct, userId }))
         dispatch(fetchMe())
-        setHasLiked(!hasLiked)
     }
 
     function selectCategory(category) {
@@ -113,7 +116,7 @@ export default function ProductItem({
                         thumbs={{ swiper: thumbsSwiper }}
                         className="mySwiper2">
                         <SwiperSlide>
-                            {mediaMax1024 ? <img src={singleProduct.images[0]} />
+                            {mediaMax1024 ? <img src={singleProduct?.images[0]} alt="product" />
                                 : <div
                                     style={{
                                         position: "relative",
@@ -122,7 +125,7 @@ export default function ProductItem({
                                     }}
                                 >
                                     <img
-                                        src={singleProduct.images[0]}
+                                        src={singleProduct?.images[0]}
                                         onMouseEnter={(e) => {
                                             // update image size and turn-on magnifier
                                             const elem = e.currentTarget;
@@ -177,7 +180,7 @@ export default function ProductItem({
                             }
                         </SwiperSlide>
                         <SwiperSlide>
-                            {mediaMax1024 ? <img src={singleProduct.images[1]} />
+                            {mediaMax1024 ? <img src={singleProduct.images[1]} alt="product" />
                                 : <div
                                     style={{
                                         position: "relative",
@@ -186,7 +189,7 @@ export default function ProductItem({
                                     }}
                                 >
                                     <img
-                                        src={singleProduct.images[1]}
+                                        src={singleProduct?.images[1]}
                                         onMouseEnter={(e) => {
                                             // update image size and turn-on magnifier
                                             const elem = e.currentTarget;
@@ -504,12 +507,12 @@ export default function ProductItem({
                             {!hasLiked
                                 ? <span
                                     className='vishlist-span-inner'
-                                    onClick={() => changeFavorites(singleProduct, user._id)}>
+                                    onClick={() => changeFavorites(singleProduct, user?._id)}>
                                     <i className="far fa-heart"></i>Add to Wishlist
                                 </span>
                                 : <span
                                     className='fontawesome-span'
-                                    onClick={() => changeFavorites(singleProduct, user._id)}>
+                                    onClick={() => changeFavorites(singleProduct, user?._id)}>
                                     <i className='colored-heart'>
                                         <FontAwesomeIcon icon={faHeart} />
                                     </i>Added to Wishlist
